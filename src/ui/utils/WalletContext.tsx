@@ -1,5 +1,4 @@
-import React, { ReactNode } from 'react';
-import { createContext, useContext } from 'react';
+import React, { ReactNode, createContext, useContext, useState } from 'react';
 import { Object } from 'ts-toolbelt';
 import { WalletController as WalletControllerClass } from 'background/controller/wallet';
 import { IExtractFromPromise } from './type';
@@ -28,8 +27,27 @@ export type WalletController = Object.Merge<
   Record<string, <T = any>(...params: any) => Promise<T>>
 >;
 
+const useApprovalPopupViewState = () => {
+  const [visible, setVisible] = useState(false);
+  const [title, setTitle] = useState('Sign');
+  const [height, setHeight] = useState(360);
+  const [className, setClassName] = useState<'isConnectView' | undefined>();
+
+  return {
+    visible,
+    setVisible,
+    title,
+    setTitle,
+    height,
+    setHeight,
+    className,
+    setClassName,
+  };
+};
+
 const WalletContext = createContext<{
   wallet: WalletController;
+  approvalPopupView: ReturnType<typeof useApprovalPopupViewState>;
 } | null>(null);
 
 const WalletProvider = ({
@@ -38,9 +56,15 @@ const WalletProvider = ({
 }: {
   children?: ReactNode;
   wallet: WalletController;
-}) => (
-  <WalletContext.Provider value={{ wallet }}>{children}</WalletContext.Provider>
-);
+}) => {
+  const approvalPopupView = useApprovalPopupViewState();
+
+  return (
+    <WalletContext.Provider value={{ wallet, approvalPopupView }}>
+      {children}
+    </WalletContext.Provider>
+  );
+};
 
 const useWallet = () => {
   const { wallet } = (useContext(WalletContext) as unknown) as {
@@ -50,4 +74,12 @@ const useWallet = () => {
   return wallet;
 };
 
-export { WalletProvider, useWallet };
+const useApprovalPopupView = () => {
+  const { approvalPopupView } = (useContext(WalletContext) as unknown) as {
+    approvalPopupView: ReturnType<typeof useApprovalPopupViewState>;
+  };
+
+  return approvalPopupView;
+};
+
+export { WalletProvider, useWallet, useApprovalPopupView };

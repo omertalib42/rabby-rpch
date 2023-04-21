@@ -11,6 +11,8 @@ import { WALLETCONNECT_STATUS_MAP, EVENTS } from 'consts';
 import Mask from 'ui/assets/import-mask.png';
 import './style.less';
 import clsx from 'clsx';
+import IconWalletConnect from 'ui/assets/walletlogo/walletconnect.svg';
+
 const WalletConnectTemplate = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -157,21 +159,24 @@ const WalletConnectTemplate = () => {
 
   return (
     <div className="wallet-connect pb-0">
-      <div className="create-new-header create-password-header h-[220px] pt-[16px] pb-[30px]">
+      <div className="create-new-header create-password-header h-[180px] py-[20px]">
         <img
           src={IconBack}
           className="icon-back mb-0 relative z-10"
           onClick={handleClickBack}
         />
-        <img
-          className="unlock-logo w-[80px] h-[80px] mb-16 mx-auto"
-          src={brand.image}
-        />
-        <p className="text-24 mb-8 mt-0 text-white text-center font-bold">
-          {t(brand.name)}
+        <div className="relative w-[60px] h-[60px] mb-16 mx-auto mt-[-4px]">
+          <img className="unlock-logo w-full h-full" src={brand.image} />
+          <img
+            className="w-[24px] h-[24px] absolute bottom-[-4px] right-[-8px]"
+            src={IconWalletConnect}
+          />
+        </div>
+        <p className="text-[17px] leading-none mb-8 mt-0 text-white text-center font-bold">
+          Connect your {brand.name} Wallet
         </p>
-        <p className="text-15 mb-0 mt-4 text-white font-medium text-center">
-          {t('Scan with your wallet app')}
+        <p className="text-13 leading-none mb-0 text-white font-medium text-center">
+          {'via Wallet Connect'}
         </p>
         <img src={Mask} className="mask" />
       </div>
@@ -183,6 +188,8 @@ const WalletConnectTemplate = () => {
         bridgeURL={bridgeURL}
         onBridgeChange={handleBridgeChange}
         defaultBridge={DEFAULT_BRIDGE}
+        canChangeBridge={false}
+        brandName={brand.name}
       />
     </div>
   );

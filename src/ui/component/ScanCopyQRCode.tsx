@@ -11,6 +11,7 @@ import IconBridgeChange from 'ui/assets/bridgechange.svg';
 import IconQRCodeRefresh from 'ui/assets/qrcoderefresh.svg';
 import IconCopy from 'ui/assets/urlcopy.svg';
 import IconRefresh from 'ui/assets/urlrefresh.svg';
+import { SessionStatus } from './WalletConnect/SessionStatus';
 
 interface Props {
   showURL: boolean;
@@ -21,6 +22,7 @@ interface Props {
   bridgeURL: string;
   defaultBridge: string;
   canChangeBridge?: boolean;
+  brandName?: string;
 }
 const ScanCopyQRCode: React.FC<Props> = ({
   showURL = false,
@@ -31,6 +33,7 @@ const ScanCopyQRCode: React.FC<Props> = ({
   bridgeURL,
   defaultBridge,
   canChangeBridge = true,
+  brandName,
 }) => {
   const [isHovering, hoverProps] = useHover();
   const { t } = useTranslation();
@@ -65,7 +68,7 @@ const ScanCopyQRCode: React.FC<Props> = ({
 
   return (
     <div>
-      <div className="button-container mt-28 mb-16">
+      <div className="button-container mt-32 mb-24">
         <div
           className={clsx('cursor-pointer', { active: !showURL })}
           onClick={() => changeShowURL(false)}
@@ -117,9 +120,7 @@ const ScanCopyQRCode: React.FC<Props> = ({
           />
         </div>
       )}
-      <div className="text-12 text-gray-content text-center mb-24 mt-12">
-        WalletConnect will be unstable if you use VPN.
-      </div>
+
       {canChangeBridge && (
         <div
           className="change-bridge"
@@ -136,6 +137,7 @@ const ScanCopyQRCode: React.FC<Props> = ({
         onChange={handleBridgeServerChange}
         onCancel={() => setShowOpenApiModal(false)}
       />
+      <SessionStatus uri={qrcodeURL} brandName={brandName} />
     </div>
   );
 };

@@ -1358,6 +1358,13 @@ export class WalletController extends BaseController {
           setPageStateCacheWhenPopupClose(data);
         }
       });
+
+      keyring.on('sessionStatusChange', (data) => {
+        eventBus.emit(EVENTS.broadcastToUI, {
+          method: EVENTS.WALLETCONNECT.SESSION_STATUS_CHANGED,
+          params: data,
+        });
+      });
     }
     return {
       uri,

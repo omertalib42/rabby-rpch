@@ -10,10 +10,12 @@ import { useWallet } from './WalletContext';
 import { getUiType } from './index';
 import { KEYRING_TYPE_TEXT, WALLET_BRAND_CONTENT } from '@/constant';
 import { LedgerHDPathType, LedgerHDPathTypeLabel } from '@/utils/ledger';
+import { useApprovalPopup } from './approval-popup';
 
 export const useApproval = () => {
   const wallet = useWallet();
   const history = useHistory();
+  const { showPopup, enablePopup } = useApprovalPopup();
 
   const getApproval: () => Promise<Approval> = wallet.getApproval;
 
@@ -32,6 +34,10 @@ export const useApproval = () => {
       return;
     }
     setTimeout(() => {
+      if (enablePopup(data.type)) {
+        showPopup(approval);
+        return;
+      }
       history.replace('/');
     });
   };

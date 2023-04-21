@@ -56,6 +56,7 @@ import { ImportMyMetaMaskAccount } from './ImportMyMetaMaskAccount';
 import { SwapByDex } from './DexSwap';
 import { matomoRequestEvent } from '@/utils/matomo-request';
 import { PreferMetamaskDapps } from './PreferMetamaskDapps';
+import { ApprovalPopup } from './ApprovalPopup';
 
 declare global {
   interface Window {
@@ -275,6 +276,8 @@ const Main = () => {
           <Phishing />
         </Route>
       </Switch>
+
+      <ApprovalPopup />
     </>
   );
 };
