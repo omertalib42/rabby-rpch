@@ -45,6 +45,8 @@ import IconWatchPurple from 'ui/assets/walletlogo/watch-purple.svg';
 import IconWatchWhite from 'ui/assets/walletlogo/IconWatch-white.svg';
 import LogoDefiant from 'ui/assets/walletlogo/defiant.svg';
 import LogoDefiantWhite from 'ui/assets/walletlogo/defiant.svg';
+import LogoWalletConnect from 'ui/assets/walletlogo/walletconnect.svg';
+import LogoWalletConnectWhite from 'ui/assets/walletlogo/walletconnect.svg';
 
 export { CHAINS, CHAINS_ENUM };
 
@@ -316,7 +318,8 @@ export enum WALLET_BRAND_TYPES {
   METAMASK = 'MetaMask',
   KEYSTONE = 'Keystone',
   COOLWALLET = 'CoolWallet',
-  DEFIANT = 'Defiant',
+  // DEFIANT = 'Defiant',
+  WALLETCONNECT = 'WALLETCONNECT',
   AIRGAP = 'AirGap',
 }
 
@@ -375,12 +378,21 @@ export const WALLET_BRAND_CONTENT: {
     connectType: BRAND_WALLET_CONNECT_TYPE.QRCodeBase,
     category: WALLET_BRAND_CATEGORY.HARDWARE,
   },
-  [WALLET_BRAND_TYPES.DEFIANT]: {
-    id: 17,
-    name: 'Defiant',
-    brand: WALLET_BRAND_TYPES.DEFIANT,
-    icon: LogoDefiant,
-    image: LogoDefiantWhite,
+  // [WALLET_BRAND_TYPES.DEFIANT]: {
+  //   id: 17,
+  //   name: 'Defiant',
+  //   brand: WALLET_BRAND_TYPES.DEFIANT,
+  //   icon: LogoDefiant,
+  //   image: LogoDefiantWhite,
+  //   connectType: BRAND_WALLET_CONNECT_TYPE.WalletConnect,
+  //   category: WALLET_BRAND_CATEGORY.MOBILE,
+  // },
+  [WALLET_BRAND_TYPES.WALLETCONNECT]: {
+    id: 20,
+    name: 'WalletConnect',
+    brand: WALLET_BRAND_TYPES.WALLETCONNECT,
+    icon: LogoWalletConnect,
+    image: LogoWalletConnectWhite,
     connectType: BRAND_WALLET_CONNECT_TYPE.WalletConnect,
     category: WALLET_BRAND_CATEGORY.MOBILE,
   },

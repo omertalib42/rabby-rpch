@@ -30,6 +30,7 @@ import IconCheck from 'ui/assets/check.svg';
 import IconWhitelist from 'ui/assets/address/whitelist.svg';
 import { CopyChecked } from '@/ui/component/CopyChecked';
 import { SessionSignal } from '@/ui/component/WalletConnect/SessionSignal';
+import { useWalletConnectIcon } from '@/ui/component/WalletConnect/useWalletConnectIcon';
 
 export interface AddressItemProps {
   balance: number;
@@ -128,12 +129,22 @@ const AddressItem = memo(
       };
     }, []);
 
+    const brandIcon = useWalletConnectIcon({
+      address,
+      brandName,
+      type,
+    });
+
     const addressTypeIcon = useMemo(
       () =>
         isCurrentAccount
-          ? WALLET_BRAND_CONTENT?.[brandName]?.image || KEYRINGS_LOGOS[type]
-          : KEYRING_ICONS[type] || WALLET_BRAND_CONTENT?.[brandName]?.image,
-      [type, brandName]
+          ? brandIcon ||
+            WALLET_BRAND_CONTENT?.[brandName]?.image ||
+            KEYRINGS_LOGOS[type]
+          : brandIcon ||
+            KEYRING_ICONS[type] ||
+            WALLET_BRAND_CONTENT?.[brandName]?.image,
+      [type, brandName, brandIcon]
     );
 
     return (

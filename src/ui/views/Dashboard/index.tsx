@@ -66,6 +66,7 @@ import { ReactComponent as IconArrowRight } from 'ui/assets/dashboard/arrow-righ
 import Queue from './components/Queue';
 import { copyAddress } from '@/ui/utils/clipboard';
 import { SessionSignal } from '@/ui/component/WalletConnect/SessionSignal';
+import { useWalletConnectIcon } from '@/ui/component/WalletConnect/useWalletConnectIcon';
 
 const GnosisAdminItem = ({
   accounts,
@@ -580,6 +581,9 @@ const Dashboard = () => {
     });
     history.push('/switch-address');
   };
+
+  const brandIcon = useWalletConnectIcon(currentAccount);
+
   return (
     <>
       <div
@@ -610,6 +614,7 @@ const Dashboard = () => {
                         opacity60 && 'opacity-60'
                       )}
                       src={
+                        brandIcon ||
                         WALLET_BRAND_CONTENT[currentAccount.brandName]?.image ||
                         KEYRING_ICONS_WHITE[currentAccount.type]
                       }

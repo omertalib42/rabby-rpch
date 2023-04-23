@@ -34,7 +34,8 @@ const walletSortObj = [
   WALLET_BRAND_TYPES.IMTOKEN,
   WALLET_BRAND_TYPES.TP,
   WALLET_BRAND_TYPES.MATHWALLET,
-  WALLET_BRAND_TYPES.DEFIANT,
+  // WALLET_BRAND_TYPES.DEFIANT,
+  WALLET_BRAND_TYPES.WALLETCONNECT,
   //hard wallet
   WALLET_BRAND_TYPES.LEDGER,
   WALLET_BRAND_TYPES.TREZOR,
@@ -290,12 +291,13 @@ const AddAddressOptions = () => {
                               src={v.image}
                               className="w-[28px] h-[28px] rounded-full"
                             />
-                            {v.connectType === 'WalletConnect' && (
-                              <img
-                                src={IconWalletConnect}
-                                className="absolute -top-6 -right-6 w-[14px] h-[14px] rounded-full"
-                              />
-                            )}
+                            {v.connectType === 'WalletConnect' &&
+                              v.brand !== WALLET_BRAND_TYPES.WALLETCONNECT && (
+                                <img
+                                  src={IconWalletConnect}
+                                  className="absolute -bottom-6 -right-6 w-[14px] h-[14px] rounded-full"
+                                />
+                              )}
                           </div>
                         }
                         rightIcon={null}

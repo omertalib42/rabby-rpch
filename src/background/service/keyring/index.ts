@@ -465,7 +465,7 @@ export class KeyringService extends EventEmitter {
           brandName:
             typeof account === 'string'
               ? selectedKeyring.type
-              : account.brandName,
+              : account?.realBrandName || account.brandName,
         }));
         allAccounts.forEach((account) => {
           this.setAddressAlias(

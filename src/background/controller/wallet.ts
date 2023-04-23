@@ -1427,11 +1427,22 @@ export class WalletController extends BaseController {
     }
   };
 
+  getCommonWalletConnectInfo = (address: string) => {
+    const keyringType = KEYRING_CLASS.WALLETCONNECT;
+    const keyring: WalletConnectKeyring = this._getKeyringByType(keyringType);
+    if (keyring) {
+      return keyring.getCommonWalletConnectInfo(address);
+    }
+    return;
+  };
+
   importWalletConnect = async (
     address: string,
     brandName: string,
     bridge?: string,
-    stashId?: number
+    stashId?: number,
+    realBrandName?: string,
+    realBrandUrl?: string
   ) => {
     let keyring: WalletConnectKeyring, isNewKey;
     const keyringType = KEYRING_CLASS.WALLETCONNECT;
@@ -1454,6 +1465,8 @@ export class WalletController extends BaseController {
       address,
       brandName,
       bridge,
+      realBrandName,
+      realBrandUrl,
     });
 
     if (isNewKey) {
