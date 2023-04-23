@@ -1307,6 +1307,15 @@ export class WalletController extends BaseController {
     return null;
   };
 
+  getWalletConnectSessionStatus = (address: string, brandName: string) => {
+    const keyringType = KEYRING_CLASS.WALLETCONNECT;
+    const keyring: WalletConnectKeyring = this._getKeyringByType(keyringType);
+    if (keyring) {
+      return keyring.getSessionStatus(address, brandName);
+    }
+    return null;
+  };
+
   initWalletConnect = async (brandName: string, bridge?: string) => {
     let keyring: WalletConnectKeyring, isNewKey;
     const keyringType = KEYRING_CLASS.WALLETCONNECT;

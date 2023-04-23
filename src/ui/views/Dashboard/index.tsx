@@ -65,6 +65,7 @@ import { ReactComponent as IconAddAddress } from '@/ui/assets/address/add-addres
 import { ReactComponent as IconArrowRight } from 'ui/assets/dashboard/arrow-right.svg';
 import Queue from './components/Queue';
 import { copyAddress } from '@/ui/utils/clipboard';
+import { SessionSignal } from '@/ui/component/WalletConnect/SessionSignal';
 
 const GnosisAdminItem = ({
   accounts,
@@ -602,10 +603,10 @@ const Dashboard = () => {
                   placement="bottomLeft"
                   overlayClassName="switch-popover"
                 >
-                  {
+                  <div className="relative mr-[4px]">
                     <img
                       className={clsx(
-                        'icon icon-account-type w-[20px] h-[20px]',
+                        'icon w-[24px] h-[24px]',
                         opacity60 && 'opacity-60'
                       )}
                       src={
@@ -613,7 +614,14 @@ const Dashboard = () => {
                         KEYRING_ICONS_WHITE[currentAccount.type]
                       }
                     />
-                  }
+                    {currentAccount.type === KEYRING_CLASS.WALLETCONNECT && (
+                      <SessionSignal
+                        isBadge
+                        address={currentAccount.address}
+                        brandName={currentAccount.brandName}
+                      />
+                    )}
+                  </div>
                   <div
                     className="text-15 text-white ml-6 mr-6 dashboard-name"
                     title={displayName}

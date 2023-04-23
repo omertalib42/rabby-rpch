@@ -29,6 +29,7 @@ import IconCheck from 'ui/assets/check.svg';
 
 import IconWhitelist from 'ui/assets/address/whitelist.svg';
 import { CopyChecked } from '@/ui/component/CopyChecked';
+import { SessionSignal } from '@/ui/component/WalletConnect/SessionSignal';
 
 export interface AddressItemProps {
   balance: number;
@@ -169,10 +170,16 @@ const AddressItem = memo(
               BRAND_ALIAN_TYPE_TEXT[brandName] || brandName
             )}
           >
-            <img
-              src={addressTypeIcon}
-              className="rabby-address-item-icon w-[24px] h-[24px]"
-            />
+            <div className="relative mr-[12px]">
+              <img src={addressTypeIcon} className="w-[24px] h-[24px]" />
+              {type === KEYRING_CLASS.WALLETCONNECT && (
+                <SessionSignal
+                  isBadge
+                  address={address}
+                  brandName={brandName}
+                />
+              )}
+            </div>
           </Tooltip>
 
           <div className={clsx('rabby-address-item-content')}>

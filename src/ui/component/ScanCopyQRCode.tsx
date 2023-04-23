@@ -11,7 +11,7 @@ import IconBridgeChange from 'ui/assets/bridgechange.svg';
 import IconQRCodeRefresh from 'ui/assets/qrcoderefresh.svg';
 import IconCopy from 'ui/assets/urlcopy.svg';
 import IconRefresh from 'ui/assets/urlrefresh.svg';
-import { SessionStatus } from './WalletConnect/SessionStatus';
+import { ConnectStatus } from './WalletConnect/ConnectStatus';
 
 interface Props {
   showURL: boolean;
@@ -137,7 +137,7 @@ const ScanCopyQRCode: React.FC<Props> = ({
         onChange={handleBridgeServerChange}
         onCancel={() => setShowOpenApiModal(false)}
       />
-      <SessionStatus uri={qrcodeURL} brandName={brandName} />
+      <ConnectStatus uri={qrcodeURL} brandName={brandName} />
     </div>
   );
 };

@@ -1,21 +1,17 @@
 import React from 'react';
-import { WALLETCONNECT_SESSION_STATUS_MAP } from '@rabby-wallet/eth-walletconnect-keyring';
 import clsx from 'clsx';
-import eventBus from '@/eventBus';
-import { EVENTS } from '@/constant';
 
 import TipInfoSVG from 'ui/assets/walletconnect/tip-info.svg';
 import TipWarningSVG from 'ui/assets/walletconnect/tip-warning.svg';
 import TipSuccessSVG from 'ui/assets/walletconnect/tip-success.svg';
+import { useStatus } from './useStatus';
 
 interface Props {
   brandName?: string;
   uri: string;
 }
-export const SessionStatus: React.FC<Props> = ({ brandName }) => {
-  const [status, setStatus] = React.useState<
-    keyof typeof WALLETCONNECT_SESSION_STATUS_MAP
-  >();
+export const ConnectStatus: React.FC<Props> = ({ brandName }) => {
+  const status = useStatus();
 
   const statusText = React.useMemo(() => {
     switch (status) {
@@ -58,24 +54,6 @@ export const SessionStatus: React.FC<Props> = ({ brandName }) => {
         return null;
     }
   }, [type]);
-
-  React.useEffect(() => {
-    const handleSessionChange = (data: any) => {
-      setStatus(data.status);
-    };
-
-    eventBus.addEventListener(
-      EVENTS.WALLETCONNECT.SESSION_STATUS_CHANGED,
-      handleSessionChange
-    );
-
-    return () => {
-      eventBus.removeEventListener(
-        EVENTS.WALLETCONNECT.SESSION_STATUS_CHANGED,
-        handleSessionChange
-      );
-    };
-  }, []);
 
   return (
     <div
