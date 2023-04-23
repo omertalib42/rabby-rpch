@@ -49,8 +49,8 @@ interface SignTextProps {
 
 export const WaitingSignComponent = {
   // [KEYRING_CLASS.HARDWARE.LEDGER]: 'HardwareWaiting',
-  // [KEYRING_CLASS.WATCH]: 'WatchAdrressWaiting',
-  [KEYRING_CLASS.WALLETCONNECT]: 'WatchAdrressWaiting',
+  // [KEYRING_CLASS.WATCH]: 'WatchAddressWaiting',
+  [KEYRING_CLASS.WALLETCONNECT]: 'WatchAddressWaiting',
   // [KEYRING_CLASS.GNOSIS]: 'GnosisWaiting',
   [KEYRING_CLASS.HARDWARE.KEYSTONE]: 'QRHardWareWaiting',
   [KEYRING_CLASS.HARDWARE.LEDGER]: 'LedgerHardwareWaiting',

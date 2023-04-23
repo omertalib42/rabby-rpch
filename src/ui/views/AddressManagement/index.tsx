@@ -16,6 +16,7 @@ import { ReactComponent as IconAddAddress } from '@/ui/assets/address/add-addres
 import { groupBy } from 'lodash';
 import styled from 'styled-components';
 import { KEYRING_CLASS } from '@/constant';
+import { SessionStatusBar } from '@/ui/component/WalletConnect/SessionStatusBar';
 
 const AddressManagement = () => {
   const { t } = useTranslation();
@@ -212,7 +213,16 @@ const AddressManagement = () => {
                   })}`
                 );
               }}
-            />
+            >
+              {accountList[currentAccountIndex].type ===
+                KEYRING_CLASS.WALLETCONNECT && (
+                <SessionStatusBar
+                  address={accountList[currentAccountIndex].address || ''}
+                  brandName={accountList[currentAccountIndex].brandName || ''}
+                  className="m-[16px] mt-0 text-white bg-[#0000001A]"
+                />
+              )}
+            </AddressItem>
           </div>
           <SwitchTips>Switch Address</SwitchTips>
         </>
