@@ -69,8 +69,8 @@ const ScanCopyQRCode: React.FC<Props> = ({
   };
 
   React.useEffect(() => {
-    // refresh when scan success
-    if (status === 'RECEIVED') {
+    // refresh when status is not connected
+    if (status !== 'CONNECTED') {
       refreshFun();
     }
   }, [status]);
