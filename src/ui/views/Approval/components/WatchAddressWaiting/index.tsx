@@ -267,7 +267,6 @@ const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
         currentAccount ? (
           <Scan
             uri={qrcodeContent}
-            chain={chain}
             bridgeURL={bridgeURL}
             onBridgeChange={handleBridgeChange}
             onRefresh={handleRefreshQrCode}

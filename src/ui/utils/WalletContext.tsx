@@ -45,9 +45,22 @@ const useApprovalPopupViewState = () => {
   };
 };
 
+const useWalletConnectPopupViewState = () => {
+  const [visible, setVisible] = useState(false);
+  const [title, setTitle] = useState('Connect');
+
+  return {
+    visible,
+    setVisible,
+    title,
+    setTitle,
+  };
+};
+
 const WalletContext = createContext<{
   wallet: WalletController;
   approvalPopupView: ReturnType<typeof useApprovalPopupViewState>;
+  walletConnectPopupView: ReturnType<typeof useWalletConnectPopupViewState>;
 } | null>(null);
 
 const WalletProvider = ({
@@ -58,9 +71,12 @@ const WalletProvider = ({
   wallet: WalletController;
 }) => {
   const approvalPopupView = useApprovalPopupViewState();
+  const walletConnectPopupView = useWalletConnectPopupViewState();
 
   return (
-    <WalletContext.Provider value={{ wallet, approvalPopupView }}>
+    <WalletContext.Provider
+      value={{ wallet, approvalPopupView, walletConnectPopupView }}
+    >
       {children}
     </WalletContext.Provider>
   );
@@ -82,4 +98,17 @@ const useApprovalPopupView = () => {
   return approvalPopupView;
 };
 
-export { WalletProvider, useWallet, useApprovalPopupView };
+const useWalletConnectPopupView = () => {
+  const { walletConnectPopupView } = (useContext(WalletContext) as unknown) as {
+    walletConnectPopupView: ReturnType<typeof useWalletConnectPopupViewState>;
+  };
+
+  return walletConnectPopupView;
+};
+
+export {
+  WalletProvider,
+  useWallet,
+  useApprovalPopupView,
+  useWalletConnectPopupView,
+};

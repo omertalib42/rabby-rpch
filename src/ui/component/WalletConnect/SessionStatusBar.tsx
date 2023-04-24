@@ -2,6 +2,7 @@ import React from 'react';
 import { SessionSignal } from './SessionSignal';
 import clsx from 'clsx';
 import { useStatus } from './useStatus';
+import { useWallet, useWalletConnectPopupView } from '@/ui/utils';
 
 interface Props {
   address: string;
@@ -18,13 +19,14 @@ export const SessionStatusBar: React.FC<Props> = ({
     address,
     brandName,
   });
+  const { setVisible } = useWalletConnectPopupView();
+  const wallet = useWallet();
 
   const handleConnect = () => {
-    // todo
     if (status === 'CONNECTED') {
-      // disconnect
+      wallet.killWalletConnectConnector(address, brandName);
     } else if (!status || status === 'DISCONNECTED') {
-      // connect
+      setVisible(true);
     }
   };
 

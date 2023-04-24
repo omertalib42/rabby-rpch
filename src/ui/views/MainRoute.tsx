@@ -57,6 +57,7 @@ import { SwapByDex } from './DexSwap';
 import { matomoRequestEvent } from '@/utils/matomo-request';
 import { PreferMetamaskDapps } from './PreferMetamaskDapps';
 import { ApprovalPopup } from './ApprovalPopup';
+import { WalletConnectPopup } from './WalletConnectPopup';
 
 declare global {
   interface Window {
@@ -278,6 +279,7 @@ const Main = () => {
       </Switch>
 
       <ApprovalPopup />
+      <WalletConnectPopup />
     </>
   );
 };

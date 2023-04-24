@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Account } from 'background/service/preference';
-import { CHAINS_ENUM } from 'consts';
 import { ScanCopyQRCode } from 'ui/component';
 import { useApprovalPopupView } from 'ui/utils';
 
@@ -13,7 +12,6 @@ const Scan = ({
   account,
 }: {
   uri: string;
-  chain: CHAINS_ENUM;
   bridgeURL: string;
   defaultBridge: string;
   account: Account;
