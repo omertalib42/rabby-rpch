@@ -7,6 +7,7 @@ interface Props {
   isBadge?: boolean;
   address: string;
   brandName: string;
+  className?: string;
 }
 
 export const SessionSignal: React.FC<Props> = ({
@@ -14,6 +15,7 @@ export const SessionSignal: React.FC<Props> = ({
   isBadge,
   address,
   brandName,
+  className,
 }) => {
   const status = useStatus({
     address,
@@ -35,7 +37,8 @@ export const SessionSignal: React.FC<Props> = ({
           'bg-red-forbidden': status === 'DISCONNECTED',
           'bg-orange': status === 'ACCOUNT_ERROR' || status === 'CHAIN_ERROR',
           'bg-gray-comment': !status,
-        }
+        },
+        className
       )}
     />
   );

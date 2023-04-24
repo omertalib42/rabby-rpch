@@ -37,8 +37,13 @@ export const SessionStatusBar: React.FC<Props> = ({
         className
       )}
     >
-      <div className="flex flex-row items-center">
-        <SessionSignal size="small" address={address} brandName={brandName} />
+      <div className="flex flex-row items-start">
+        <SessionSignal
+          size="small"
+          address={address}
+          brandName={brandName}
+          className="mt-[7px]"
+        />
         <div className={clsx('ml-[4px]')}>
           {status === 'CONNECTED' && <div>Connected {brandName}</div>}
           {status === 'DISCONNECTED' && (

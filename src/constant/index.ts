@@ -389,7 +389,7 @@ export const WALLET_BRAND_CONTENT: {
   // },
   [WALLET_BRAND_TYPES.WALLETCONNECT]: {
     id: 20,
-    name: 'WalletConnect',
+    name: 'Wallet Connect',
     brand: WALLET_BRAND_TYPES.WALLETCONNECT,
     icon: LogoWalletConnect,
     image: LogoWalletConnectWhite,

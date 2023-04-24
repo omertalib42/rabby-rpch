@@ -21,6 +21,8 @@ export const ConnectStatus: React.FC<Props> = ({ brandName }) => {
         return '已取消，可以重新扫码连接';
       case 'BRAND_NAME_ERROR':
         return `钱包不匹配，请使用 ${brandName} 扫描连接`;
+      case 'REJECTED':
+        return '已拒绝';
       case 'CONNECTED':
         return '已连接';
       default:
@@ -34,6 +36,7 @@ export const ConnectStatus: React.FC<Props> = ({ brandName }) => {
       case 'CONNECTED':
         return 'success';
       case 'BRAND_NAME_ERROR':
+      case 'REJECTED':
         return 'warning';
       case 'DISCONNECTED':
         return 'info';
