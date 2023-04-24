@@ -48,12 +48,19 @@ const useApprovalPopupViewState = () => {
 const useWalletConnectPopupViewState = () => {
   const [visible, setVisible] = useState(false);
   const [title, setTitle] = useState('Connect');
+  const [account, setAccount] = useState<{
+    address: string;
+    brandName: string;
+    realBrandName?: string;
+  }>();
 
   return {
     visible,
     setVisible,
     title,
     setTitle,
+    account,
+    setAccount,
   };
 };
 

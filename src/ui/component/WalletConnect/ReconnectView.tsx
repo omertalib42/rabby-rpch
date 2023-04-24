@@ -1,4 +1,4 @@
-import { EVENTS } from '@/constant';
+import { EVENTS, KEYRING_CLASS } from '@/constant';
 import eventBus from '@/eventBus';
 import { noop, useWalletConnectPopupView, useWallet } from '@/ui/utils';
 import {
@@ -14,30 +14,16 @@ export const ReconnectView: React.FC = () => {
   const {
     setTitle: setPopupViewTitle,
     setVisible,
+    account,
   } = useWalletConnectPopupView();
-  const [qrcodeContent, setQRcodeContent] = React.useState('');
-  const [result, setResult] = React.useState('');
+  const [qrCodeContent, setQRcodeContent] = React.useState('');
   const [currentAccount, setCurrentAccount] = React.useState<Account | null>(
     null
   );
-  const [connectError, setConnectError] = React.useState<null | {
-    code?: number;
-    message?: string;
-  }>(null);
-  const [connectStatus, setConnectStatus] = React.useState(
-    WALLETCONNECT_STATUS_MAP.WAITING
-  );
+
   const [bridgeURL, setBridge] = React.useState<string>(DEFAULT_BRIDGE);
 
   const initWalletConnect = async () => {
-    const account = (await wallet.syncGetCurrentAccount())!;
-    const status = await wallet.getWalletConnectStatus(
-      account.address,
-      account.brandName
-    );
-    setConnectStatus(
-      status === null ? WALLETCONNECT_STATUS_MAP.PENDING : status
-    );
     eventBus.addEventListener(EVENTS.WALLETCONNECT.INITED, ({ uri }) => {
       setQRcodeContent(uri);
     });
@@ -53,35 +39,28 @@ export const ReconnectView: React.FC = () => {
   };
 
   const init = async () => {
-    const account = (await wallet.syncGetCurrentAccount())!;
+    if (!account) return;
     const bridge = await wallet.getWalletConnectBridge(
       account.address,
       account.brandName
     );
-    setCurrentAccount(account);
+    setCurrentAccount({
+      ...account,
+      type: KEYRING_CLASS.WALLETCONNECT,
+    });
     setBridge(bridge || DEFAULT_BRIDGE);
-    setPopupViewTitle(`Connect with ${account.brandName}`);
+    setPopupViewTitle(
+      `Connect with ${account.realBrandName || account.brandName}`
+    );
 
     eventBus.addEventListener(
       EVENTS.WALLETCONNECT.STATUS_CHANGED,
-      async ({ status, payload }) => {
-        setConnectStatus(status);
-
+      async ({ status }) => {
         switch (status) {
           case WALLETCONNECT_STATUS_MAP.CONNECTED:
-            // todo 更新当前账户的walletconnect状态
             setVisible(false);
             break;
-          case WALLETCONNECT_STATUS_MAP.FAILD:
-          case WALLETCONNECT_STATUS_MAP.REJECTED:
-            if (payload.code) {
-              setConnectError({ code: payload.code });
-            } else {
-              setConnectError((payload.params && payload.params[0]) || payload);
-            }
-            break;
-          case WALLETCONNECT_STATUS_MAP.SIBMITTED:
-            setResult(payload);
+          default:
             break;
         }
       }
@@ -97,7 +76,7 @@ export const ReconnectView: React.FC = () => {
     <div className="watchaddress">
       {currentAccount && (
         <Scan
-          uri={qrcodeContent}
+          uri={qrCodeContent}
           bridgeURL={bridgeURL}
           onRefresh={handleRefreshQrCode}
           defaultBridge={DEFAULT_BRIDGE}

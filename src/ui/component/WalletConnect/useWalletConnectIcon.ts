@@ -1,8 +1,4 @@
-import {
-  KEYRING_CLASS,
-  WALLET_BRAND_CONTENT,
-  WALLET_BRAND_TYPES,
-} from '@/constant';
+import { KEYRING_CLASS, WALLET_BRAND_TYPES } from '@/constant';
 import { useWallet } from '@/ui/utils';
 import React from 'react';
 

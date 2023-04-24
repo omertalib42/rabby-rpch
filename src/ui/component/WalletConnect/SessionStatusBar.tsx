@@ -3,6 +3,7 @@ import { SessionSignal } from './SessionSignal';
 import clsx from 'clsx';
 import { useStatus } from './useStatus';
 import { useWallet, useWalletConnectPopupView } from '@/ui/utils';
+import { WALLET_BRAND_TYPES } from '@/constant';
 
 interface Props {
   address: string;
@@ -19,16 +20,33 @@ export const SessionStatusBar: React.FC<Props> = ({
     address,
     brandName,
   });
-  const { setVisible } = useWalletConnectPopupView();
+  const { setVisible, setAccount } = useWalletConnectPopupView();
   const wallet = useWallet();
+  const [displayBrandName, setDisplayBrandName] = React.useState<string>();
 
   const handleConnect = () => {
     if (status === 'CONNECTED') {
       wallet.killWalletConnectConnector(address, brandName);
     } else if (!status || status === 'DISCONNECTED') {
+      setAccount({
+        address,
+        brandName,
+        realBrandName: displayBrandName,
+      });
       setVisible(true);
     }
   };
+
+  React.useEffect(() => {
+    if (brandName !== WALLET_BRAND_TYPES.WALLETCONNECT) {
+      setDisplayBrandName(brandName);
+      return;
+    }
+    wallet.getCommonWalletConnectInfo(address).then((result) => {
+      if (!result) return;
+      setDisplayBrandName(result.realBrandName || result.brandName);
+    });
+  }, [address, brandName]);
 
   return (
     <div
@@ -67,7 +85,7 @@ export const SessionStatusBar: React.FC<Props> = ({
               </div>
             </>
           )}
-          {!status && <div>Not Connected {brandName}</div>}
+          {!status && <div>Not Connected {displayBrandName}</div>}
         </div>
       </div>
       <div onClick={handleConnect} className={clsx('underline cursor-pointer')}>
