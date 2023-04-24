@@ -1,10 +1,15 @@
 import { EVENTS } from '@/constant';
 import eventBus from '@/eventBus';
-import { useWallet } from '@/ui/utils';
+import { isSameAddress, useWallet } from '@/ui/utils';
 import { WALLETCONNECT_SESSION_STATUS_MAP } from '@rabby-wallet/eth-walletconnect-keyring';
 import React from 'react';
 
-export const useStatus = (opt?: { address: string; brandName: string }) => {
+/**
+ * WalletConnect connect status
+ * if account is not provided, it will return the status no matter which account is connected
+ * if account is provided, it will return the status of the provided account
+ */
+export const useStatus = (account?: { address: string; brandName: string }) => {
   const wallet = useWallet();
   const [status, setStatus] = React.useState<
     keyof typeof WALLETCONNECT_SESSION_STATUS_MAP
@@ -13,11 +18,11 @@ export const useStatus = (opt?: { address: string; brandName: string }) => {
   React.useEffect(() => {
     const handleSessionChange = (data: any) => {
       console.log(data);
-      if (!opt) {
+      if (!account) {
         setStatus(data.status);
       } else if (
-        data.address === opt.address &&
-        data.brandName === opt.brandName
+        isSameAddress(data.address, account.address) &&
+        data.brandName === account.brandName
       ) {
         setStatus(data.status);
       }
@@ -34,15 +39,15 @@ export const useStatus = (opt?: { address: string; brandName: string }) => {
         handleSessionChange
       );
     };
-  }, [opt]);
+  }, [account]);
 
   React.useEffect(() => {
-    if (opt) {
+    if (account) {
       wallet
-        .getWalletConnectSessionStatus(opt.address, opt.brandName)
+        .getWalletConnectSessionStatus(account.address, account.brandName)
         .then((result) => result && setStatus(result));
     }
-  }, [opt]);
+  }, [account]);
 
   return status;
 };

@@ -65,7 +65,7 @@ export const SessionStatusBar: React.FC<Props> = ({
           className="mt-[7px]"
         />
         <div className={clsx('ml-[4px]')}>
-          {status === 'CONNECTED' && <div>Connected {brandName}</div>}
+          {status === 'CONNECTED' && <div>Connected {displayBrandName}</div>}
           {status === 'DISCONNECTED' && (
             <div>Disconnected and trying to reconnect</div>
           )}

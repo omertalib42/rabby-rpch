@@ -12,6 +12,7 @@ import IconQRCodeRefresh from 'ui/assets/qrcoderefresh.svg';
 import IconCopy from 'ui/assets/urlcopy.svg';
 import IconRefresh from 'ui/assets/urlrefresh.svg';
 import { ConnectStatus } from './WalletConnect/ConnectStatus';
+import { useStatus } from './WalletConnect/useStatus';
 
 interface Props {
   showURL: boolean;
@@ -39,6 +40,7 @@ const ScanCopyQRCode: React.FC<Props> = ({
   const { t } = useTranslation();
   const [copySuccess, setCopySuccess] = useState(false);
   const [showOpenApiModal, setShowOpenApiModal] = useState(false);
+  const status = useStatus();
 
   const handleCopyCurrentAddress = () => {
     const clipboard = new ClipboardJS('.wallet-connect', {
@@ -65,6 +67,13 @@ const ScanCopyQRCode: React.FC<Props> = ({
     onBridgeChange(val);
     setShowOpenApiModal(false);
   };
+
+  React.useEffect(() => {
+    // refresh when scan success
+    if (status === 'RECEIVED') {
+      refreshFun();
+    }
+  }, [status]);
 
   return (
     <div>
