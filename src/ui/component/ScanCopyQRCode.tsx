@@ -13,6 +13,7 @@ import IconCopy from 'ui/assets/urlcopy.svg';
 import IconRefresh from 'ui/assets/urlrefresh.svg';
 import { ConnectStatus } from './WalletConnect/ConnectStatus';
 import { useStatus } from './WalletConnect/useStatus';
+import { Account } from '@/background/service/preference';
 
 interface Props {
   showURL: boolean;
@@ -24,6 +25,7 @@ interface Props {
   defaultBridge: string;
   canChangeBridge?: boolean;
   brandName?: string;
+  account?: Account;
 }
 const ScanCopyQRCode: React.FC<Props> = ({
   showURL = false,
@@ -35,12 +37,13 @@ const ScanCopyQRCode: React.FC<Props> = ({
   defaultBridge,
   canChangeBridge = true,
   brandName,
+  account,
 }) => {
   const [isHovering, hoverProps] = useHover();
   const { t } = useTranslation();
   const [copySuccess, setCopySuccess] = useState(false);
   const [showOpenApiModal, setShowOpenApiModal] = useState(false);
-  const status = useStatus();
+  const status = useStatus(account);
 
   const handleCopyCurrentAddress = () => {
     const clipboard = new ClipboardJS('.wallet-connect', {
@@ -146,7 +149,7 @@ const ScanCopyQRCode: React.FC<Props> = ({
         onChange={handleBridgeServerChange}
         onCancel={() => setShowOpenApiModal(false)}
       />
-      <ConnectStatus uri={qrcodeURL} brandName={brandName} />
+      <ConnectStatus account={account} uri={qrcodeURL} brandName={brandName} />
     </div>
   );
 };

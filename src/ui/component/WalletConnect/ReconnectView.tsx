@@ -6,6 +6,7 @@ import React from 'react';
 import { Account } from 'background/service/preference';
 import Scan from '@/ui/views/Approval/components/WatchAddressWaiting/Scan';
 import { useStatus } from './useStatus';
+import { useDisplayBrandName } from './useDisplayBrandName';
 
 export const ReconnectView: React.FC = () => {
   const wallet = useWallet();
@@ -20,6 +21,9 @@ export const ReconnectView: React.FC = () => {
   );
   const status = useStatus(account);
   const [bridgeURL, setBridge] = React.useState<string>(DEFAULT_BRIDGE);
+  const displayBrandName = useDisplayBrandName(
+    account?.realBrandName || account?.brandName
+  );
 
   const initWalletConnect = async () => {
     eventBus.addEventListener(EVENTS.WALLETCONNECT.INITED, ({ uri }) => {
@@ -48,9 +52,7 @@ export const ReconnectView: React.FC = () => {
       type: KEYRING_CLASS.WALLETCONNECT,
     });
     setBridge(bridge || DEFAULT_BRIDGE);
-    setPopupViewTitle(
-      `Connect with ${account.realBrandName || account.brandName}`
-    );
+    setPopupViewTitle(`Connect with ${displayBrandName}`);
     initWalletConnect();
   };
 

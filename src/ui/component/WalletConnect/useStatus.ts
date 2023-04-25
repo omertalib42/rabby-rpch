@@ -25,6 +25,8 @@ export const useStatus = (account?: { address: string; brandName: string }) => {
         data.brandName === account.brandName
       ) {
         setStatus(data.status);
+      } else {
+        setStatus('ACCOUNT_ERROR');
       }
     };
 

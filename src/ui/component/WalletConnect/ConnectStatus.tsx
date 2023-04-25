@@ -5,30 +5,35 @@ import TipInfoSVG from 'ui/assets/walletconnect/tip-info.svg';
 import TipWarningSVG from 'ui/assets/walletconnect/tip-warning.svg';
 import TipSuccessSVG from 'ui/assets/walletconnect/tip-success.svg';
 import { useStatus } from './useStatus';
+import { Account } from '@/background/service/preference';
+import { useDisplayBrandName } from './useDisplayBrandName';
 
 interface Props {
   brandName?: string;
+  account?: Account;
   uri: string;
 }
-export const ConnectStatus: React.FC<Props> = ({ brandName }) => {
-  const status = useStatus();
+export const ConnectStatus: React.FC<Props> = ({ brandName, account }) => {
+  const status = useStatus(account);
+  const displayBrandName = useDisplayBrandName(brandName);
 
   const statusText = React.useMemo(() => {
     switch (status) {
       case 'RECEIVED':
-        return '扫码成功，等待确认';
-      case 'DISCONNECTED':
-        return '已取消，可以重新扫码连接';
-      case 'BRAND_NAME_ERROR':
-        return `钱包不匹配，请使用 ${brandName} 扫描连接`;
+        return 'Scan successful. Waiting to be confirmed';
       case 'REJECTED':
-        return '已拒绝';
+      case 'DISCONNECTED':
+        return 'Connection canceled. Please scan the QR code to retry.';
+      case 'BRAND_NAME_ERROR':
+        return `Wrong wallet app. Please use ${displayBrandName} to connect`;
+      case 'ACCOUNT_ERROR':
+        return `Address not match. Please use MetaMask to connect`;
       case 'CONNECTED':
-        return '已连接';
+        return 'Connected';
       default:
-        return `Scan with your ${brandName} Wallet App`;
+        return `Scan with your ${displayBrandName} wallet`;
     }
-  }, [status, brandName]);
+  }, [status, displayBrandName]);
 
   const type = React.useMemo(() => {
     switch (status) {
@@ -36,12 +41,11 @@ export const ConnectStatus: React.FC<Props> = ({ brandName }) => {
       case 'CONNECTED':
         return 'success';
       case 'BRAND_NAME_ERROR':
-      case 'REJECTED':
         return 'warning';
+      case 'REJECTED':
       case 'DISCONNECTED':
-        return 'info';
       default:
-        return '';
+        return 'info';
     }
   }, [status]);
 
@@ -52,9 +56,8 @@ export const ConnectStatus: React.FC<Props> = ({ brandName }) => {
       case 'warning':
         return TipWarningSVG;
       case 'info':
-        return TipInfoSVG;
       default:
-        return null;
+        return TipInfoSVG;
     }
   }, [type]);
 

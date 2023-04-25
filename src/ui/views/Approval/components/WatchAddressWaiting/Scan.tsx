@@ -46,6 +46,7 @@ const Scan = ({
         defaultBridge={defaultBridge}
         canChangeBridge={false}
         brandName={brandName!}
+        account={account}
       />
     </div>
   );

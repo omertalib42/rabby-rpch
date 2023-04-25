@@ -14,6 +14,7 @@ export const WalletConnectPopup: React.FC = () => {
       height={420}
       onClose={() => setVisible(false)}
       visible={visible}
+      className="isConnectView"
     >
       {visible && <ReconnectView />}
     </Popup>

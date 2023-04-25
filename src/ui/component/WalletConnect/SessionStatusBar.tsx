@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useStatus } from './useStatus';
 import { useWallet, useWalletConnectPopupView } from '@/ui/utils';
 import { WALLET_BRAND_TYPES } from '@/constant';
+import { useDisplayBrandName } from './useDisplayBrandName';
 
 interface Props {
   address: string;
@@ -22,7 +23,8 @@ export const SessionStatusBar: React.FC<Props> = ({
   });
   const { setVisible, setAccount } = useWalletConnectPopupView();
   const wallet = useWallet();
-  const [displayBrandName, setDisplayBrandName] = React.useState<string>();
+  const [realBrandName, setRealBrandName] = React.useState<string>();
+  const displayBrandName = useDisplayBrandName(realBrandName);
 
   const handleConnect = () => {
     if (status === 'CONNECTED') {
@@ -31,7 +33,7 @@ export const SessionStatusBar: React.FC<Props> = ({
       setAccount({
         address,
         brandName,
-        realBrandName: displayBrandName,
+        realBrandName,
       });
       setVisible(true);
     }
@@ -39,12 +41,12 @@ export const SessionStatusBar: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (brandName !== WALLET_BRAND_TYPES.WALLETCONNECT) {
-      setDisplayBrandName(brandName);
+      setRealBrandName(brandName);
       return;
     }
     wallet.getCommonWalletConnectInfo(address).then((result) => {
       if (!result) return;
-      setDisplayBrandName(result.realBrandName || result.brandName);
+      setRealBrandName(result.realBrandName || result.brandName);
     });
   }, [address, brandName]);
 
@@ -53,19 +55,17 @@ export const SessionStatusBar: React.FC<Props> = ({
       case 'ACCOUNT_ERROR':
         return (
           <>
-            <div>Connected 但是无法直接签名.</div>
-            <div>
-              The wallet address does not match ,你可以在手机钱包手动切换
-            </div>
+            <div>Connected but unable to sign.</div>
+            <div>Please switch to the correct address in mobile wallet</div>
           </>
         );
 
       case undefined:
       case 'DISCONNECTED':
-        return <div>Not Connected {displayBrandName}</div>;
+        return <div>Not Connected to {displayBrandName}</div>;
 
       default:
-        return <div>Connected {displayBrandName}</div>;
+        return <div>Connected to {displayBrandName}</div>;
     }
   };
 
