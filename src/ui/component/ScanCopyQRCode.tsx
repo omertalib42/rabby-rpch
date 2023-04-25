@@ -70,7 +70,7 @@ const ScanCopyQRCode: React.FC<Props> = ({
 
   React.useEffect(() => {
     // refresh when status is not connected
-    if (status !== 'CONNECTED') {
+    if (status && status !== 'CONNECTED') {
       refreshFun();
     }
   }, [status]);

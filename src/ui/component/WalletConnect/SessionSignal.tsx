@@ -22,6 +22,20 @@ export const SessionSignal: React.FC<Props> = ({
     brandName,
   });
 
+  const bgColor = React.useMemo(() => {
+    switch (status) {
+      case 'ACCOUNT_ERROR':
+        return 'bg-orange';
+
+      case undefined:
+      case 'DISCONNECTED':
+        return 'bg-gray-comment';
+
+      default:
+        return 'bg-green';
+    }
+  }, [status]);
+
   return (
     <div
       className={clsx(
@@ -32,12 +46,7 @@ export const SessionSignal: React.FC<Props> = ({
           'right-[-2px] bottom-[-2px] absolute': isBadge,
         },
         'border border-white',
-        {
-          'bg-green': status === 'CONNECTED',
-          'bg-red-forbidden': status === 'DISCONNECTED',
-          'bg-orange': status === 'ACCOUNT_ERROR' || status === 'CHAIN_ERROR',
-          'bg-gray-comment': !status,
-        },
+        bgColor,
         className
       )}
     />

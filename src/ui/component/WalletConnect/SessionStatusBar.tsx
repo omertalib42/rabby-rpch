@@ -48,6 +48,27 @@ export const SessionStatusBar: React.FC<Props> = ({
     });
   }, [address, brandName]);
 
+  const TipContent = () => {
+    switch (status) {
+      case 'ACCOUNT_ERROR':
+        return (
+          <>
+            <div>Connected 但是无法直接签名.</div>
+            <div>
+              The wallet address does not match ,你可以在手机钱包手动切换
+            </div>
+          </>
+        );
+
+      case undefined:
+      case 'DISCONNECTED':
+        return <div>Not Connected {displayBrandName}</div>;
+
+      default:
+        return <div>Connected {displayBrandName}</div>;
+    }
+  };
+
   return (
     <div
       className={clsx(
@@ -65,27 +86,7 @@ export const SessionStatusBar: React.FC<Props> = ({
           className="mt-[7px]"
         />
         <div className={clsx('ml-[4px]')}>
-          {status === 'CONNECTED' && <div>Connected {displayBrandName}</div>}
-          {status === 'DISCONNECTED' && (
-            <div>Disconnected and trying to reconnect</div>
-          )}
-          {status === 'ACCOUNT_ERROR' && (
-            <>
-              <div>Connected 但是无法直接签名.</div>
-              <div>
-                The wallet address does not match ,你可以在手机钱包手动切换
-              </div>
-            </>
-          )}
-          {status === 'CHAIN_ERROR' && (
-            <>
-              <div>Connected 但是无法直接签名.</div>
-              <div>
-                The wallet chain does not match ,你可以在手机钱包手动切换
-              </div>
-            </>
-          )}
-          {!status && <div>Not Connected {displayBrandName}</div>}
+          <TipContent />
         </div>
       </div>
       <div onClick={handleConnect} className={clsx('underline cursor-pointer')}>
