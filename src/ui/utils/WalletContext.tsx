@@ -2,6 +2,7 @@ import React, { ReactNode, createContext, useContext, useState } from 'react';
 import { Object } from 'ts-toolbelt';
 import { WalletController as WalletControllerClass } from 'background/controller/wallet';
 import { IExtractFromPromise } from './type';
+import { CommonPopupComponentName } from '../views/CommonPopup';
 
 // TODO: implement here but not used now to avoid too much ts checker error.
 // we will use it on almost biz store ready.
@@ -27,27 +28,12 @@ export type WalletController = Object.Merge<
   Record<string, <T = any>(...params: any) => Promise<T>>
 >;
 
-const useApprovalPopupViewState = () => {
-  const [visible, setVisible] = useState(false);
+const useCommonPopupViewState = () => {
+  const [visible, setVisible] = useState<CommonPopupComponentName | false>();
   const [title, setTitle] = useState('Sign');
   const [height, setHeight] = useState(360);
   const [className, setClassName] = useState<'isConnectView' | undefined>();
 
-  return {
-    visible,
-    setVisible,
-    title,
-    setTitle,
-    height,
-    setHeight,
-    className,
-    setClassName,
-  };
-};
-
-const useWalletConnectPopupViewState = () => {
-  const [visible, setVisible] = useState(false);
-  const [title, setTitle] = useState('Connect');
   const [account, setAccount] = useState<{
     address: string;
     brandName: string;
@@ -59,6 +45,10 @@ const useWalletConnectPopupViewState = () => {
     setVisible,
     title,
     setTitle,
+    height,
+    setHeight,
+    className,
+    setClassName,
     account,
     setAccount,
   };
@@ -66,8 +56,7 @@ const useWalletConnectPopupViewState = () => {
 
 const WalletContext = createContext<{
   wallet: WalletController;
-  approvalPopupView: ReturnType<typeof useApprovalPopupViewState>;
-  walletConnectPopupView: ReturnType<typeof useWalletConnectPopupViewState>;
+  commonPopupView: ReturnType<typeof useCommonPopupViewState>;
 } | null>(null);
 
 const WalletProvider = ({
@@ -77,13 +66,10 @@ const WalletProvider = ({
   children?: ReactNode;
   wallet: WalletController;
 }) => {
-  const approvalPopupView = useApprovalPopupViewState();
-  const walletConnectPopupView = useWalletConnectPopupViewState();
+  const commonPopupView = useCommonPopupViewState();
 
   return (
-    <WalletContext.Provider
-      value={{ wallet, approvalPopupView, walletConnectPopupView }}
-    >
+    <WalletContext.Provider value={{ wallet, commonPopupView }}>
       {children}
     </WalletContext.Provider>
   );
@@ -97,25 +83,12 @@ const useWallet = () => {
   return wallet;
 };
 
-const useApprovalPopupView = () => {
-  const { approvalPopupView } = (useContext(WalletContext) as unknown) as {
-    approvalPopupView: ReturnType<typeof useApprovalPopupViewState>;
+const useCommonPopupView = () => {
+  const { commonPopupView } = (useContext(WalletContext) as unknown) as {
+    commonPopupView: ReturnType<typeof useCommonPopupViewState>;
   };
 
-  return approvalPopupView;
+  return commonPopupView;
 };
 
-const useWalletConnectPopupView = () => {
-  const { walletConnectPopupView } = (useContext(WalletContext) as unknown) as {
-    walletConnectPopupView: ReturnType<typeof useWalletConnectPopupViewState>;
-  };
-
-  return walletConnectPopupView;
-};
-
-export {
-  WalletProvider,
-  useWallet,
-  useApprovalPopupView,
-  useWalletConnectPopupView,
-};
+export { WalletProvider, useWallet, useCommonPopupView };

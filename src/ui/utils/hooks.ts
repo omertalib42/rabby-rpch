@@ -1,8 +1,4 @@
-import {
-  HARDWARE_KEYRING_TYPES,
-  KEYRING_CLASS,
-  KEYRING_TYPE,
-} from './../../constant/index';
+import { KEYRING_CLASS, KEYRING_TYPE } from './../../constant/index';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Approval } from 'background/service/notification';
@@ -35,7 +31,7 @@ export const useApproval = () => {
     }
     setTimeout(() => {
       if (enablePopup(data.type)) {
-        showPopup(approval);
+        showPopup();
         return;
       }
       history.replace('/');

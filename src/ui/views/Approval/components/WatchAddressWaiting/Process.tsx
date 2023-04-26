@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { Account } from 'background/service/preference';
 import { CHAINS, CHAINS_ENUM, WALLETCONNECT_STATUS_MAP } from 'consts';
-import { openInTab, useApprovalPopupView } from 'ui/utils';
+import { openInTab, useCommonPopupView } from 'ui/utils';
 import { SvgIconOpenExternal } from 'ui/assets';
 
 import TXSendingSVG from 'ui/assets/walletconnect/tx-sending.svg';
@@ -32,7 +32,7 @@ const Process = ({
   onRetry(): void;
   onCancel(): void;
 }) => {
-  const { setClassName } = useApprovalPopupView();
+  const { setClassName } = useCommonPopupView();
   const [address, setAddress] = useState<null | string>(null);
   const history = useHistory();
   const handleRetry = () => {

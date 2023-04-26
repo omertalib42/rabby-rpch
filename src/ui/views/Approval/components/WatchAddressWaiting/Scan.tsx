@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Account } from 'background/service/preference';
 import { ScanCopyQRCode } from 'ui/component';
-import { useApprovalPopupView } from 'ui/utils';
+import { useCommonPopupView } from 'ui/utils';
 
 const Scan = ({
   uri,
@@ -23,7 +23,7 @@ const Scan = ({
   const handleRefresh = () => {
     onRefresh();
   };
-  const { setHeight, setClassName } = useApprovalPopupView();
+  const { setHeight, setClassName } = useCommonPopupView();
 
   const init = async () => {
     setBrandName(account.brandName);

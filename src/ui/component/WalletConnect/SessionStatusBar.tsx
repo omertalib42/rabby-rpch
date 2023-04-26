@@ -2,7 +2,7 @@ import React from 'react';
 import { SessionSignal } from './SessionSignal';
 import clsx from 'clsx';
 import { useStatus } from './useStatus';
-import { useWallet, useWalletConnectPopupView } from '@/ui/utils';
+import { useWallet, useCommonPopupView } from '@/ui/utils';
 import { WALLET_BRAND_TYPES } from '@/constant';
 import { useDisplayBrandName } from './useDisplayBrandName';
 
@@ -21,7 +21,7 @@ export const SessionStatusBar: React.FC<Props> = ({
     address,
     brandName,
   });
-  const { setVisible, setAccount } = useWalletConnectPopupView();
+  const { setVisible, setAccount } = useCommonPopupView();
   const wallet = useWallet();
   const [realBrandName, setRealBrandName] = React.useState<string>();
   const displayBrandName = useDisplayBrandName(realBrandName);
@@ -35,7 +35,7 @@ export const SessionStatusBar: React.FC<Props> = ({
         brandName,
         realBrandName,
       });
-      setVisible(true);
+      setVisible('WalletConnect');
     }
   };
 

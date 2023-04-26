@@ -1,6 +1,6 @@
 import { EVENTS, KEYRING_CLASS } from '@/constant';
 import eventBus from '@/eventBus';
-import { noop, useWalletConnectPopupView, useWallet } from '@/ui/utils';
+import { noop, useCommonPopupView, useWallet } from '@/ui/utils';
 import { DEFAULT_BRIDGE } from '@rabby-wallet/eth-walletconnect-keyring';
 import React from 'react';
 import { Account } from 'background/service/preference';
@@ -12,9 +12,11 @@ export const ReconnectView: React.FC = () => {
   const wallet = useWallet();
   const {
     setTitle: setPopupViewTitle,
+    setHeight,
+    setClassName,
     setVisible,
     account,
-  } = useWalletConnectPopupView();
+  } = useCommonPopupView();
   const [qrCodeContent, setQRcodeContent] = React.useState('');
   const [currentAccount, setCurrentAccount] = React.useState<Account | null>(
     null
@@ -53,6 +55,8 @@ export const ReconnectView: React.FC = () => {
     });
     setBridge(bridge || DEFAULT_BRIDGE);
     setPopupViewTitle(`Connect with ${displayBrandName}`);
+    setHeight(420);
+    setClassName('isConnectView');
     initWalletConnect();
   };
 

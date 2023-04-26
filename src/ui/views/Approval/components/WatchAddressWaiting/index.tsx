@@ -8,7 +8,7 @@ import {
   EVENTS,
   KEYRING_CATEGORY_MAP,
 } from 'consts';
-import { useApproval, useWallet, useApprovalPopupView } from 'ui/utils';
+import { useApproval, useWallet, useCommonPopupView } from 'ui/utils';
 import eventBus from '@/eventBus';
 import Process from './Process';
 import Scan from './Scan';
@@ -26,7 +26,7 @@ interface ApprovalParams {
 
 const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
   const wallet = useWallet();
-  const { setTitle: setPopupViewTitle } = useApprovalPopupView();
+  const { setTitle: setPopupViewTitle } = useCommonPopupView();
   const [connectStatus, setConnectStatus] = useState(
     WALLETCONNECT_STATUS_MAP.WAITING
   );

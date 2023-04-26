@@ -56,8 +56,7 @@ import { ImportMyMetaMaskAccount } from './ImportMyMetaMaskAccount';
 import { SwapByDex } from './DexSwap';
 import { matomoRequestEvent } from '@/utils/matomo-request';
 import { PreferMetamaskDapps } from './PreferMetamaskDapps';
-import { ApprovalPopup } from './ApprovalPopup';
-import { WalletConnectPopup } from './WalletConnectPopup';
+import { CommonPopup } from './CommonPopup';
 
 declare global {
   interface Window {
@@ -278,8 +277,7 @@ const Main = () => {
         </Route>
       </Switch>
 
-      <ApprovalPopup />
-      <WalletConnectPopup />
+      <CommonPopup />
     </>
   );
 };
