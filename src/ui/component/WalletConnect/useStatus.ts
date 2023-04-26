@@ -18,14 +18,16 @@ export const useStatus = (account?: { address: string; brandName: string }) => {
   React.useEffect(() => {
     const handleSessionChange = (data: any) => {
       console.log(data);
-      if (!account) {
-        setStatus(data.status);
-      } else if (
-        isSameAddress(data.address, account.address) &&
-        data.brandName === account.brandName
+      if (
+        !account ||
+        !data.address ||
+        (isSameAddress(data.address, account.address) &&
+          data.brandName === account.brandName)
       ) {
         setStatus(data.status);
-      } else {
+      } else if (data.brandName !== account.brandName) {
+        setStatus('BRAND_NAME_ERROR');
+      } else if (!isSameAddress(data.address, account.address)) {
         setStatus('ACCOUNT_ERROR');
       }
     };

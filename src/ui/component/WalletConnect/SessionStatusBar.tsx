@@ -26,16 +26,35 @@ export const SessionStatusBar: React.FC<Props> = ({
   const [realBrandName, setRealBrandName] = React.useState<string>();
   const displayBrandName = useDisplayBrandName(realBrandName);
 
-  const handleConnect = () => {
-    if (status === 'CONNECTED') {
+  const tipStatus = React.useMemo(() => {
+    switch (status) {
+      case 'ACCOUNT_ERROR':
+        return 'ACCOUNT_ERROR';
+
+      case undefined:
+      case 'DISCONNECTED':
+      case 'RECEIVED':
+      case 'REJECTED':
+      case 'BRAND_NAME_ERROR':
+        return 'DISCONNECTED';
+
+      default:
+        return 'CONNECTED';
+    }
+  }, [status]);
+
+  const handleButton = () => {
+    if (tipStatus === 'CONNECTED') {
       wallet.killWalletConnectConnector(address, brandName);
-    } else if (!status || status === 'DISCONNECTED') {
+    } else if (tipStatus === 'DISCONNECTED') {
       setAccount({
         address,
         brandName,
         realBrandName,
       });
       setVisible('WalletConnect');
+    } else if (tipStatus === 'ACCOUNT_ERROR') {
+      setVisible('MetaMaskSwitchAddress');
     }
   };
 
@@ -51,7 +70,7 @@ export const SessionStatusBar: React.FC<Props> = ({
   }, [address, brandName]);
 
   const TipContent = () => {
-    switch (status) {
+    switch (tipStatus) {
       case 'ACCOUNT_ERROR':
         return (
           <>
@@ -60,7 +79,6 @@ export const SessionStatusBar: React.FC<Props> = ({
           </>
         );
 
-      case undefined:
       case 'DISCONNECTED':
         return <div>Not Connected to {displayBrandName}</div>;
 
@@ -72,7 +90,8 @@ export const SessionStatusBar: React.FC<Props> = ({
   return (
     <div
       className={clsx(
-        'py-[6px] px-[8px] rounded-[4px]',
+        'relative',
+        'py-[6px] pl-[8px] pr-[6px] rounded-[4px]',
         'flex flex-row items-center justify-between',
         'text-[13px]',
         className
@@ -89,9 +108,16 @@ export const SessionStatusBar: React.FC<Props> = ({
           <TipContent />
         </div>
       </div>
-      <div onClick={handleConnect} className={clsx('underline cursor-pointer')}>
-        {status === 'CONNECTED' && 'Disconnect'}
-        {(status === 'DISCONNECTED' || !status) && 'Connect'}
+      <div
+        onClick={handleButton}
+        className={clsx(
+          'underline cursor-pointer',
+          'absolute right-[8px] top-[6px]'
+        )}
+      >
+        {tipStatus === 'CONNECTED' && 'Disconnect'}
+        {tipStatus === 'DISCONNECTED' && 'Connect'}
+        {tipStatus === 'ACCOUNT_ERROR' && 'How to switch'}
       </div>
     </div>
   );

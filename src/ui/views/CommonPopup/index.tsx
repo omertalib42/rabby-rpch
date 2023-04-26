@@ -3,8 +3,12 @@ import { useCommonPopupView } from '@/ui/utils';
 import React from 'react';
 import Approval from '../Approval';
 import { ReconnectView } from '@/ui/component/WalletConnect/ReconnectView';
+import { MetaMaskSwitchAddress } from './MetaMaskSwitchAddress';
 
-export type CommonPopupComponentName = 'Approval' | 'WalletConnect';
+export type CommonPopupComponentName =
+  | 'Approval'
+  | 'WalletConnect'
+  | 'MetaMaskSwitchAddress';
 
 export const CommonPopup: React.FC = () => {
   const {
@@ -26,6 +30,7 @@ export const CommonPopup: React.FC = () => {
     >
       {visible === 'Approval' && <Approval className="h-full" />}
       {visible === 'WalletConnect' && <ReconnectView />}
+      {visible === 'MetaMaskSwitchAddress' && <MetaMaskSwitchAddress />}
     </Popup>
   );
 };

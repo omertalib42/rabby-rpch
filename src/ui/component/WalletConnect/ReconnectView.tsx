@@ -7,6 +7,7 @@ import { Account } from 'background/service/preference';
 import Scan from '@/ui/views/Approval/components/WatchAddressWaiting/Scan';
 import { useStatus } from './useStatus';
 import { useDisplayBrandName } from './useDisplayBrandName';
+import { message } from 'antd';
 
 export const ReconnectView: React.FC = () => {
   const wallet = useWallet();
@@ -66,6 +67,10 @@ export const ReconnectView: React.FC = () => {
 
   React.useEffect(() => {
     if (status === 'CONNECTED') {
+      message.success({
+        type: 'success',
+        content: 'Connected',
+      });
       setVisible(false);
     }
   }, [account, status]);

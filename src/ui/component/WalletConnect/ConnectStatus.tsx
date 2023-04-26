@@ -27,7 +27,7 @@ export const ConnectStatus: React.FC<Props> = ({ brandName, account }) => {
       case 'BRAND_NAME_ERROR':
         return `Wrong wallet app. Please use ${displayBrandName} to connect`;
       case 'ACCOUNT_ERROR':
-        return `Address not match. Please use MetaMask to connect`;
+        return 'Address not match. Please switch address in your mobile wallet';
       case 'CONNECTED':
         return 'Connected';
       default:

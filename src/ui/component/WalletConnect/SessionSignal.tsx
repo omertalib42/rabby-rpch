@@ -29,6 +29,8 @@ export const SessionSignal: React.FC<Props> = ({
 
       case undefined:
       case 'DISCONNECTED':
+      case 'RECEIVED':
+      case 'REJECTED':
         return 'bg-gray-comment';
 
       default:
