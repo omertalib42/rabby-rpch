@@ -1,28 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from 'antd';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 import { Account } from 'background/service/preference';
-import { CHAINS, CHAINS_ENUM, WALLETCONNECT_STATUS_MAP } from 'consts';
-import { openInTab, useCommonPopupView } from 'ui/utils';
-import { SvgIconOpenExternal } from 'ui/assets';
-
-import TXSendingSVG from 'ui/assets/walletconnect/tx-sending.svg';
-import TXWaitingSVG from 'ui/assets/walletconnect/tx-waiting.svg';
-import TXErrorSVG from 'ui/assets/walletconnect/tx-error.svg';
-import TXRejectedSVG from 'ui/assets/walletconnect/tx-rejected.svg';
-import TXSubmittedSVG from 'ui/assets/walletconnect/tx-submitted.svg';
+import {
+  CHAINS_ENUM,
+  WALLETCONNECT_STATUS_MAP,
+  WALLET_BRAND_CONTENT,
+} from 'consts';
+import { useCommonPopupView } from 'ui/utils';
 import clsx from 'clsx';
+import {
+  WALLET_BRAND_NAME_KEY,
+  useDisplayBrandName,
+} from '@/ui/component/WalletConnect/useDisplayBrandName';
+import { useWalletConnectIcon } from '@/ui/component/WalletConnect/useWalletConnectIcon';
+
+import TXWaitingSVG from 'ui/assets/approval/tx-waiting.svg';
+import TXErrorSVG from 'ui/assets/approval/tx-error.svg';
+import TXSubmittedSVG from 'ui/assets/approval/tx-submitted.svg';
+import { FooterResend } from './FooterResend';
+import { FooterResendButton } from './FooterResendButton';
+import { FooterDoneButton } from './FooterDoneButton';
+import { FooterResendCancelGroup } from './FooterResendCancelGroup';
+import { useInterval } from 'react-use';
 
 type Valueof<T> = T[keyof T];
 
 const Process = ({
-  chain,
-  result,
   status,
   account,
   error,
   onRetry,
   onCancel,
+  onDone,
 }: {
   chain: CHAINS_ENUM;
   result: string;
@@ -31,152 +39,158 @@ const Process = ({
   error: { code?: number; message?: string } | null;
   onRetry(): void;
   onCancel(): void;
+  onDone(): void;
 }) => {
-  const { setClassName } = useCommonPopupView();
-  const [address, setAddress] = useState<null | string>(null);
-  const history = useHistory();
+  const { setClassName, setTitle: setPopupViewTitle } = useCommonPopupView();
+  const displayBrandName = useDisplayBrandName(account.brandName);
+  const brandRealUrl = useWalletConnectIcon(account);
+  const brandUrl = React.useMemo(() => {
+    return (
+      brandRealUrl ||
+      WALLET_BRAND_CONTENT[displayBrandName]?.icon ||
+      WALLET_BRAND_CONTENT[WALLET_BRAND_NAME_KEY[displayBrandName]]?.icon ||
+      WALLET_BRAND_CONTENT.WALLETCONNECT.icon
+    );
+  }, [brandRealUrl]);
   const handleRetry = () => {
     onRetry();
   };
   const handleCancel = () => {
     onCancel();
   };
-  const handleOK = () => {
-    history.push('/');
-  };
-  const handleClickResult = () => {
-    const url = CHAIN.scanLink.replace(/_s_/, result);
-    openInTab(url);
-  };
-  const CHAIN = CHAINS[chain];
-  const [image, setImage] = useState('');
-  const [content, setContent] = useState('');
-  let titleColor = '';
-  let description = <></>;
+
+  const [sendingCounter, setSendingCounter] = React.useState(5);
+  const [image, setImage] = React.useState('');
+  const [content, setContent] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [contentColor, setContentColor] = React.useState('');
+
+  useInterval(() => {
+    setSendingCounter((prev) => prev - 1);
+  }, 1000);
+
+  const mergedStatus = React.useMemo(() => {
+    if (sendingCounter <= 0) {
+      setSendingCounter(5);
+      return WALLETCONNECT_STATUS_MAP.FAILD;
+    }
+    return status;
+  }, [status]);
+
+  React.useEffect(() => {
+    setPopupViewTitle(`Sign with ${displayBrandName}`);
+  }, [displayBrandName]);
 
   const init = async () => {
-    setAddress(account.address);
     setClassName(undefined);
   };
 
-  useEffect(() => {
-    switch (status) {
+  React.useEffect(() => {
+    switch (mergedStatus) {
       case WALLETCONNECT_STATUS_MAP.CONNECTED:
-        setImage(TXSendingSVG);
-        setContent('正在发送签名请求  1s');
+        setImage('/images/tx-sending.gif');
+        setContent('Sending signing request');
+        setDescription('');
+        setContentColor('text-gray-title');
         break;
       case WALLETCONNECT_STATUS_MAP.WAITING:
         setImage(TXWaitingSVG);
-        setContent('发送成功，请在手机钱包签名');
-        titleColor = '#8697FF';
-        description = (
-          <p className="text-gray-content text-14 text-center">
-            {'Waiting for signature'}
-          </p>
-        );
+        setContent('Request successfully sent. ');
+        setDescription('Please sign on your mobile wallet.');
+        setContentColor('text-gray-title');
         break;
       case WALLETCONNECT_STATUS_MAP.FAILD:
         setImage(TXErrorSVG);
-        setContent('Connection failed');
-        titleColor = '#F24822';
-
+        setContent('Signing request failed to send');
+        setDescription('');
+        setContentColor('bg-red-forbidden');
         break;
       case WALLETCONNECT_STATUS_MAP.SIBMITTED:
         setImage(TXSubmittedSVG);
-        setContent('watch Transaction submitted');
-        titleColor = '#27C193';
-        description = (
-          <p className="text-gray-content text-14 text-center">
-            {'Your transaction has been submitted'}
-          </p>
-        );
+        setContent('Transaction submitted');
+        setDescription('');
+        setContentColor('text-gray-title');
         break;
       case WALLETCONNECT_STATUS_MAP.REJECTED:
-        setImage(TXRejectedSVG);
+        setImage(TXErrorSVG);
         setContent('Transaction rejected');
-        titleColor = '#F24822';
-        description = (
-          <p className="error-alert">
-            {'You have refused to sign the transaction'}
-          </p>
-        );
+        setDescription('');
+        setContentColor('bg-red-forbidden');
         break;
     }
-  }, [status, error]);
+  }, [mergedStatus, error]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     init();
   }, []);
 
   return (
-    <div className="flex flex-col items-center">
-      <img src={image} className={'w-[160px] h-[160px]'} />
+    <div
+      className={clsx(
+        'flex flex-col items-center mt-[20px]',
+        'relative h-full'
+      )}
+    >
       <div
-        className={clsx('text-[20px] font-bold mt-[16px]', {
-          'text-[#EC5151]': status === WALLETCONNECT_STATUS_MAP.FAILD,
+        className={clsx(
+          'w-[80px] h-[80px] rounded-full',
+          'border-[#E5E9EF] border-[2px]',
+          'relative'
+        )}
+      >
+        <img src={brandUrl} className={'w-full h-full'} />
+        <div
+          className={clsx(
+            'w-[32px] h-[32px] rounded-full',
+            'absolute bottom-[-6px] right-[-6px]',
+            'border border-[#E5E9EF]',
+            'bg-[#8697FF]',
+            'flex'
+          )}
+        >
+          <img src={image} className={'m-auto'} />
+        </div>
+      </div>
+      <div
+        className={clsx('text-[20px] font-bold mt-[40px]', {
+          contentColor,
         })}
       >
         {content}
+        {status === WALLETCONNECT_STATUS_MAP.CONNECTED && (
+          <span> ({sendingCounter}s)</span>
+        )}
+      </div>
+      <div
+        className={clsx('text-[20px] font-bold', {
+          contentColor,
+        })}
+      >
+        {description}
       </div>
 
-      <div className="h-[40px] mt-[30px]">
-        <div
-          className={clsx('text-[15px] underline text-gray-subTitle')}
-          onClick={handleRetry}
-        >
-          Retry
-        </div>
+      <div className="h-[40px] absolute bottom-[10px]">
+        {status === WALLETCONNECT_STATUS_MAP.CONNECTED && (
+          <FooterResend onResend={handleRetry} />
+        )}
+        {status === WALLETCONNECT_STATUS_MAP.WAITING && (
+          <FooterResend onResend={handleRetry} />
+        )}
+        {status === WALLETCONNECT_STATUS_MAP.FAILD && (
+          <FooterResendButton onResend={handleRetry} />
+        )}
+        {status === WALLETCONNECT_STATUS_MAP.SIBMITTED && (
+          <FooterDoneButton onDone={onDone} />
+        )}
+        {status === WALLETCONNECT_STATUS_MAP.REJECTED && (
+          <FooterResendCancelGroup
+            onResend={handleRetry}
+            onCancel={handleCancel}
+          />
+        )}
       </div>
     </div>
   );
-
-  // return (
-  //   <div className="watchaddress-process">
-  //     <img src={image} className="watchaddress-process__status" />
-  //     <h2 className="watchaddress-process__title" style={{ color: titleColor }}>
-  //       {title}
-  //     </h2>
-  //     {description}
-  //     {result && status === WALLETCONNECT_STATUS_MAP.SIBMITTED && (
-  //       <div className="watchaddress-process__result">
-  //         <img className="icon icon-chain" src={CHAIN.logo} />
-  //         <a
-  //           href="javascript:;"
-  //           className="tx-hash"
-  //           onClick={handleClickResult}
-  //         >
-  //           {`${result.slice(0, 6)}...${result.slice(-4)}`}
-  //           <SvgIconOpenExternal className="icon icon-external" />
-  //         </a>
-  //       </div>
-  //     )}
-  //     {(status === WALLETCONNECT_STATUS_MAP.CONNECTED ||
-  //       status === WALLETCONNECT_STATUS_MAP.FAILD ||
-  //       status === WALLETCONNECT_STATUS_MAP.WAITING ||
-  //       status === WALLETCONNECT_STATUS_MAP.REJECTED) && (
-  //       <div className="watchaddress-process__buttons">
-  //         <Button type="link" onClick={handleRetry}>
-  //           {'Retry'}
-  //         </Button>
-  //         <Button type="link" onClick={handleCancel}>
-  //           {'Cancel'}
-  //         </Button>
-  //       </div>
-  //     )}
-  //     {status === WALLETCONNECT_STATUS_MAP.SIBMITTED && (
-  //       <div className="watchaddress-process__ok">
-  //         <Button
-  //           type="primary"
-  //           className="w-[200px]"
-  //           size="large"
-  //           onClick={handleOK}
-  //         >
-  //           {'OK'}
-  //         </Button>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
 };
 
 export default Process;

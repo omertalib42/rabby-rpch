@@ -1,9 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import TipInfoSVG from 'ui/assets/walletconnect/tip-info.svg';
-import TipWarningSVG from 'ui/assets/walletconnect/tip-warning.svg';
-import TipSuccessSVG from 'ui/assets/walletconnect/tip-success.svg';
+import TipInfoSVG from 'ui/assets/approval/tip-info.svg';
+import TipWarningSVG from 'ui/assets/approval/tip-warning.svg';
+import TipSuccessSVG from 'ui/assets/approval/tip-success.svg';
 import { useStatus } from './useStatus';
 import { Account } from '@/background/service/preference';
 import { useDisplayBrandName } from './useDisplayBrandName';

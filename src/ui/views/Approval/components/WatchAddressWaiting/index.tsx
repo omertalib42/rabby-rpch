@@ -8,7 +8,7 @@ import {
   EVENTS,
   KEYRING_CATEGORY_MAP,
 } from 'consts';
-import { useApproval, useWallet, useCommonPopupView } from 'ui/utils';
+import { useApproval, useWallet } from 'ui/utils';
 import eventBus from '@/eventBus';
 import Process from './Process';
 import Scan from './Scan';
@@ -26,7 +26,6 @@ interface ApprovalParams {
 
 const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
   const wallet = useWallet();
-  const { setTitle: setPopupViewTitle } = useCommonPopupView();
   const [connectStatus, setConnectStatus] = useState(
     WALLETCONNECT_STATUS_MAP.WAITING
   );
@@ -44,6 +43,11 @@ const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
   const [bridgeURL, setBridge] = useState<string>(DEFAULT_BRIDGE);
   const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
   const explainRef = useRef<any | null>(null);
+  const [signFinishedData, setSignFinishedData] = useState<{
+    data: any;
+    approvalId: string;
+  }>();
+  const [isClickDone, setIsClickDone] = useState(false);
 
   const initWalletConnect = async () => {
     const account = params.isGnosis
@@ -102,7 +106,6 @@ const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
     );
     setCurrentAccount(account);
     setBridge(bridge || DEFAULT_BRIDGE);
-    setPopupViewTitle(`Sign with ${account.brandName}`);
 
     let isSignTriggered = false;
     const isText = params.isGnosis
@@ -146,7 +149,10 @@ const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
             });
           }
         }
-        resolveApproval(data.data, false, false, approval.id);
+        setSignFinishedData({
+          data: data.data,
+          approvalId: approval.id,
+        });
       } else {
         if (!isSignTextRef.current) {
           // const tx = approval.data?.params;
@@ -259,6 +265,17 @@ const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
     init();
   }, []);
 
+  useEffect(() => {
+    if (signFinishedData && isClickDone) {
+      resolveApproval(
+        signFinishedData.data,
+        false,
+        false,
+        signFinishedData.approvalId
+      );
+    }
+  }, [signFinishedData, isClickDone]);
+
   return (
     <div className="watchaddress">
       <div className="watchaddress-operation">
@@ -283,6 +300,7 @@ const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
               onRetry={handleRetry}
               onCancel={handleCancel}
               account={currentAccount}
+              onDone={() => setIsClickDone(true)}
             />
           )
         )}
