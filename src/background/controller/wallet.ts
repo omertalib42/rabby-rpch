@@ -1307,6 +1307,15 @@ export class WalletController extends BaseController {
     return null;
   };
 
+  resendWalletConnect = () => {
+    const keyringType = KEYRING_CLASS.WALLETCONNECT;
+    const keyring: WalletConnectKeyring = this._getKeyringByType(keyringType);
+    if (keyring) {
+      return keyring.resend();
+    }
+    return null;
+  };
+
   getWalletConnectSessionStatus = (address: string, brandName: string) => {
     const keyringType = KEYRING_CLASS.WALLETCONNECT;
     const keyring: WalletConnectKeyring = this._getKeyringByType(keyringType);
@@ -1415,7 +1424,11 @@ export class WalletController extends BaseController {
     return [];
   };
 
-  killWalletConnectConnector = async (address: string, brandName: string) => {
+  killWalletConnectConnector = async (
+    address: string,
+    brandName: string,
+    resetConnect: boolean
+  ) => {
     const keyringType = KEYRING_CLASS.WALLETCONNECT;
     const keyring: WalletConnectKeyring = this._getKeyringByType(keyringType);
     if (keyring) {
@@ -1423,6 +1436,8 @@ export class WalletController extends BaseController {
         keyring.connectors[`${brandName}-${address.toLowerCase()}`];
       if (connector) {
         await keyring.closeConnector(connector.connector, address, brandName);
+        // reset onAfterConnect
+        if (resetConnect) keyring.onAfterConnect = null;
       }
     }
   };

@@ -64,6 +64,7 @@ const Process = ({
   const [content, setContent] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [contentColor, setContentColor] = React.useState('');
+  const [iconColor, setIconColor] = React.useState('');
 
   useInterval(() => {
     setSendingCounter((prev) => prev - 1);
@@ -74,6 +75,7 @@ const Process = ({
       setSendingCounter(5);
       return WALLETCONNECT_STATUS_MAP.FAILD;
     }
+    setSendingCounter(5);
     return status;
   }, [status]);
 
@@ -92,30 +94,35 @@ const Process = ({
         setContent('Sending signing request');
         setDescription('');
         setContentColor('text-gray-title');
+        setIconColor('bg-blue-light');
         break;
       case WALLETCONNECT_STATUS_MAP.WAITING:
         setImage(TXWaitingSVG);
         setContent('Request successfully sent. ');
         setDescription('Please sign on your mobile wallet.');
         setContentColor('text-gray-title');
+        setIconColor('bg-blue-light');
         break;
       case WALLETCONNECT_STATUS_MAP.FAILD:
         setImage(TXErrorSVG);
         setContent('Signing request failed to send');
         setDescription('');
-        setContentColor('bg-red-forbidden');
+        setContentColor('text-red-forbidden');
+        setIconColor('bg-red-forbidden');
         break;
       case WALLETCONNECT_STATUS_MAP.SIBMITTED:
         setImage(TXSubmittedSVG);
         setContent('Transaction submitted');
         setDescription('');
         setContentColor('text-gray-title');
+        setIconColor('bg-green');
         break;
       case WALLETCONNECT_STATUS_MAP.REJECTED:
         setImage(TXErrorSVG);
         setContent('Transaction rejected');
         setDescription('');
-        setContentColor('bg-red-forbidden');
+        setContentColor('text-red-forbidden');
+        setIconColor('bg-red-forbidden');
         break;
     }
   }, [mergedStatus, error]);
@@ -144,7 +151,7 @@ const Process = ({
             'w-[32px] h-[32px] rounded-full',
             'absolute bottom-[-6px] right-[-6px]',
             'border border-[#E5E9EF]',
-            'bg-[#8697FF]',
+            iconColor,
             'flex'
           )}
         >
@@ -157,7 +164,7 @@ const Process = ({
         })}
       >
         {content}
-        {status === WALLETCONNECT_STATUS_MAP.CONNECTED && (
+        {mergedStatus === WALLETCONNECT_STATUS_MAP.CONNECTED && (
           <span> ({sendingCounter}s)</span>
         )}
       </div>
@@ -169,20 +176,20 @@ const Process = ({
         {description}
       </div>
 
-      <div className="h-[40px] absolute bottom-[10px]">
-        {status === WALLETCONNECT_STATUS_MAP.CONNECTED && (
+      <div className="absolute bottom-[30px]">
+        {mergedStatus === WALLETCONNECT_STATUS_MAP.CONNECTED && (
           <FooterResend onResend={handleRetry} />
         )}
-        {status === WALLETCONNECT_STATUS_MAP.WAITING && (
+        {mergedStatus === WALLETCONNECT_STATUS_MAP.WAITING && (
           <FooterResend onResend={handleRetry} />
         )}
-        {status === WALLETCONNECT_STATUS_MAP.FAILD && (
+        {mergedStatus === WALLETCONNECT_STATUS_MAP.FAILD && (
           <FooterResendButton onResend={handleRetry} />
         )}
-        {status === WALLETCONNECT_STATUS_MAP.SIBMITTED && (
+        {mergedStatus === WALLETCONNECT_STATUS_MAP.SIBMITTED && (
           <FooterDoneButton onDone={onDone} />
         )}
-        {status === WALLETCONNECT_STATUS_MAP.REJECTED && (
+        {mergedStatus === WALLETCONNECT_STATUS_MAP.REJECTED && (
           <FooterResendCancelGroup
             onResend={handleRetry}
             onCancel={handleCancel}

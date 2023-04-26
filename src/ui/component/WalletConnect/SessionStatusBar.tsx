@@ -51,7 +51,7 @@ export const SessionStatusBar: React.FC<Props> = ({
       realBrandName,
     });
     if (tipStatus === 'CONNECTED') {
-      wallet.killWalletConnectConnector(address, brandName);
+      wallet.killWalletConnectConnector(address, brandName, true);
     } else if (tipStatus === 'DISCONNECTED') {
       setVisible('WalletConnect');
     } else if (tipStatus === 'ACCOUNT_ERROR') {

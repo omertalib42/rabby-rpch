@@ -82,13 +82,14 @@ const WatchAddressWaiting = ({ params }: { params: ApprovalParams }) => {
   };
 
   const handleRetry = async () => {
-    const account = params.isGnosis
-      ? params.account!
-      : (await wallet.syncGetCurrentAccount())!;
-    await wallet.killWalletConnectConnector(account.address, account.brandName);
-    await initWalletConnect();
+    // const account = params.isGnosis
+    //   ? params.account!
+    //   : (await wallet.syncGetCurrentAccount())!;
+    // await wallet.killWalletConnectConnector(account.address, account.brandName);
+    // await initWalletConnect();
     setConnectStatus(WALLETCONNECT_STATUS_MAP.PENDING);
     setConnectError(null);
+    wallet.resendWalletConnect();
   };
 
   const handleRefreshQrCode = () => {

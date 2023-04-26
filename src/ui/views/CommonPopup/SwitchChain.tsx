@@ -3,10 +3,11 @@ import { useCommonPopupView } from '@/ui/utils';
 import React from 'react';
 
 export const SwitchChain: React.FC = () => {
-  const { setTitle, account } = useCommonPopupView();
+  const { setTitle, account, setHeight } = useCommonPopupView();
 
   React.useEffect(() => {
     setTitle('How to switch');
+    setHeight(420);
   }, []);
 
   const url = React.useMemo(() => {
