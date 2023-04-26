@@ -30,7 +30,8 @@ export const SessionStatusBar: React.FC<Props> = ({
     switch (status) {
       case 'ACCOUNT_ERROR':
         return 'ACCOUNT_ERROR';
-
+      case 'CHAIN_ERROR':
+        return 'CHAIN_ERROR';
       case undefined:
       case 'DISCONNECTED':
       case 'RECEIVED':
@@ -44,17 +45,19 @@ export const SessionStatusBar: React.FC<Props> = ({
   }, [status]);
 
   const handleButton = () => {
+    setAccount({
+      address,
+      brandName,
+      realBrandName,
+    });
     if (tipStatus === 'CONNECTED') {
       wallet.killWalletConnectConnector(address, brandName);
     } else if (tipStatus === 'DISCONNECTED') {
-      setAccount({
-        address,
-        brandName,
-        realBrandName,
-      });
       setVisible('WalletConnect');
     } else if (tipStatus === 'ACCOUNT_ERROR') {
-      setVisible('MetaMaskSwitchAddress');
+      setVisible('SwitchAddress');
+    } else if (tipStatus === 'CHAIN_ERROR') {
+      setVisible('SwitchChain');
     }
   };
 

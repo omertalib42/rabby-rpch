@@ -47,6 +47,8 @@ import LogoDefiant from 'ui/assets/walletlogo/defiant.svg';
 import LogoDefiantWhite from 'ui/assets/walletlogo/defiant.svg';
 import LogoWalletConnect from 'ui/assets/walletlogo/walletconnect.svg';
 import LogoWalletConnectWhite from 'ui/assets/walletlogo/walletconnect.svg';
+import LogoCoinbase from 'ui/assets/walletlogo/coinbase.svg';
+import LogoCoinbaseWhite from 'ui/assets/walletlogo/coinbase.svg';
 
 export { CHAINS, CHAINS_ENUM };
 
@@ -318,9 +320,10 @@ export enum WALLET_BRAND_TYPES {
   METAMASK = 'MetaMask',
   KEYSTONE = 'Keystone',
   COOLWALLET = 'CoolWallet',
-  // DEFIANT = 'Defiant',
+  DEFIANT = 'Defiant',
   WALLETCONNECT = 'WALLETCONNECT',
   AIRGAP = 'AirGap',
+  COINBASE = 'Coinbase',
 }
 
 enum WALLET_BRAND_CATEGORY {
@@ -337,6 +340,7 @@ export type IWalletBrandContent = {
   image: string;
   connectType: BRAND_WALLET_CONNECT_TYPE;
   category: WALLET_BRAND_CATEGORY;
+  hidden?: boolean;
 };
 
 export const WALLET_BRAND_CONTENT: {
@@ -378,15 +382,16 @@ export const WALLET_BRAND_CONTENT: {
     connectType: BRAND_WALLET_CONNECT_TYPE.QRCodeBase,
     category: WALLET_BRAND_CATEGORY.HARDWARE,
   },
-  // [WALLET_BRAND_TYPES.DEFIANT]: {
-  //   id: 17,
-  //   name: 'Defiant',
-  //   brand: WALLET_BRAND_TYPES.DEFIANT,
-  //   icon: LogoDefiant,
-  //   image: LogoDefiantWhite,
-  //   connectType: BRAND_WALLET_CONNECT_TYPE.WalletConnect,
-  //   category: WALLET_BRAND_CATEGORY.MOBILE,
-  // },
+  [WALLET_BRAND_TYPES.DEFIANT]: {
+    id: 17,
+    name: 'Defiant',
+    brand: WALLET_BRAND_TYPES.DEFIANT,
+    icon: LogoDefiant,
+    image: LogoDefiantWhite,
+    connectType: BRAND_WALLET_CONNECT_TYPE.WalletConnect,
+    category: WALLET_BRAND_CATEGORY.MOBILE,
+    hidden: true,
+  },
   [WALLET_BRAND_TYPES.WALLETCONNECT]: {
     id: 20,
     name: 'Wallet Connect',
@@ -476,6 +481,7 @@ export const WALLET_BRAND_CONTENT: {
     image: LogoMath,
     connectType: BRAND_WALLET_CONNECT_TYPE.WalletConnect,
     category: WALLET_BRAND_CATEGORY.MOBILE,
+    hidden: true,
   },
   [WALLET_BRAND_TYPES.METAMASK]: {
     id: 14,
@@ -519,6 +525,15 @@ export const WALLET_BRAND_CONTENT: {
     brand: WALLET_BRAND_TYPES.TRUSTWALLET,
     icon: IconTrust,
     image: LogoTrust,
+    connectType: BRAND_WALLET_CONNECT_TYPE.WalletConnect,
+    category: WALLET_BRAND_CATEGORY.MOBILE,
+  },
+  [WALLET_BRAND_TYPES.COINBASE]: {
+    id: 21,
+    name: 'Coinbase Wallet',
+    brand: WALLET_BRAND_TYPES.COINBASE,
+    icon: LogoCoinbase,
+    image: LogoCoinbaseWhite,
     connectType: BRAND_WALLET_CONNECT_TYPE.WalletConnect,
     category: WALLET_BRAND_CATEGORY.MOBILE,
   },

@@ -19,6 +19,7 @@ import {
   WALLET_BRAND_CONTENT,
   BRAND_WALLET_CONNECT_TYPE,
   WALLET_BRAND_TYPES,
+  IWalletBrandContent,
 } from 'consts';
 
 import clsx from 'clsx';
@@ -31,10 +32,9 @@ const walletSortObj = [
   //mobile
   WALLET_BRAND_TYPES.METAMASK,
   WALLET_BRAND_TYPES.TRUSTWALLET,
+  WALLET_BRAND_TYPES.COINBASE,
   WALLET_BRAND_TYPES.IMTOKEN,
   WALLET_BRAND_TYPES.TP,
-  WALLET_BRAND_TYPES.MATHWALLET,
-  // WALLET_BRAND_TYPES.DEFIANT,
   WALLET_BRAND_TYPES.WALLETCONNECT,
   //hard wallet
   WALLET_BRAND_TYPES.LEDGER,
@@ -118,8 +118,9 @@ const AddAddressOptions = () => {
     handleRouter((h) => connectRouter1(h, item));
   const brandWallet = React.useMemo(
     () =>
-      Object.values(WALLET_BRAND_CONTENT)
+      (Object.values(WALLET_BRAND_CONTENT)
         .map((item) => {
+          if (item.hidden) return;
           return {
             leftIcon: item.image,
             content: t(item.name),
@@ -130,8 +131,9 @@ const AddAddressOptions = () => {
             category: item.category,
           };
         })
-        .filter(Boolean)
-        .sort((a, b) => getSortNum(a.brand) - getSortNum(b.brand)),
+        .filter(Boolean) as any).sort(
+        (a, b) => getSortNum(a.brand) - getSortNum(b.brand)
+      ),
     [t, connectRouter]
   );
 
