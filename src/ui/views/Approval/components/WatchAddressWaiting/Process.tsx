@@ -72,11 +72,15 @@ const Process = ({
 
   const mergedStatus = React.useMemo(() => {
     if (sendingCounter <= 0) {
-      setSendingCounter(5);
       return WALLETCONNECT_STATUS_MAP.FAILD;
     }
-    setSendingCounter(5);
     return status;
+  }, [status, sendingCounter]);
+
+  React.useEffect(() => {
+    if (status === WALLETCONNECT_STATUS_MAP.CONNECTED) {
+      setSendingCounter(5);
+    }
   }, [status]);
 
   React.useEffect(() => {
@@ -158,21 +162,13 @@ const Process = ({
           <img src={image} className={'m-auto'} />
         </div>
       </div>
-      <div
-        className={clsx('text-[20px] font-bold mt-[40px]', {
-          contentColor,
-        })}
-      >
+      <div className={clsx('text-[20px] font-bold mt-[40px]', contentColor)}>
         {content}
         {mergedStatus === WALLETCONNECT_STATUS_MAP.CONNECTED && (
           <span> ({sendingCounter}s)</span>
         )}
       </div>
-      <div
-        className={clsx('text-[20px] font-bold', {
-          contentColor,
-        })}
-      >
+      <div className={clsx('text-[20px] font-bold', contentColor)}>
         {description}
       </div>
 

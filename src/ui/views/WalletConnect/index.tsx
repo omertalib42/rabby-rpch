@@ -54,7 +54,7 @@ const WalletConnectTemplate = () => {
     if (
       sessionStatus === 'ACCOUNT_ERROR' ||
       sessionStatus === 'CHAIN_ERROR' ||
-      sessionStatus !== 'BRAND_NAME_ERROR'
+      sessionStatus === 'BRAND_NAME_ERROR'
     )
       return;
     const [payload, brandName] = options;
