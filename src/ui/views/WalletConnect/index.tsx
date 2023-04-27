@@ -12,6 +12,7 @@ import Mask from 'ui/assets/import-mask.png';
 import './style.less';
 import clsx from 'clsx';
 import IconWalletConnect from 'ui/assets/walletlogo/walletconnect.svg';
+import { useStatus } from '@/ui/component/WalletConnect/useStatus';
 
 const WalletConnectName = WALLET_BRAND_CONTENT['WALLETCONNECT']?.name;
 
@@ -26,6 +27,7 @@ const WalletConnectTemplate = () => {
   const [bridgeURL, setBridgeURL] = useState(DEFAULT_BRIDGE);
   const [brand, setBrand] = useState(location.state?.brand || {});
   const [ready, setReady] = useState(false);
+  const sessionStatus = useStatus();
 
   const [run, loading] = useWalletRequest(wallet.importWalletConnect, {
     onSuccess(accounts) {
@@ -49,6 +51,12 @@ const WalletConnectTemplate = () => {
   });
 
   const handleRun = async (...options: Parameters<typeof run>) => {
+    if (
+      sessionStatus === 'ACCOUNT_ERROR' ||
+      sessionStatus === 'CHAIN_ERROR' ||
+      sessionStatus !== 'BRAND_NAME_ERROR'
+    )
+      return;
     const [payload, brandName] = options;
     const { account, peerMeta } = payload as any;
 
