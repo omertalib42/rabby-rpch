@@ -27,6 +27,7 @@ import SecurityCheckCard from './SecurityCheckCard';
 import { WaitingSignComponent } from './SignText';
 import { SignTypedDataExplain } from './SignTypedDataExplain';
 import ViewRawModal from './TxComponents/ViewRawModal';
+import { FooterBar } from './FooterBar/FooterBar';
 interface SignTypedDataProps {
   method: string;
   data: any[];

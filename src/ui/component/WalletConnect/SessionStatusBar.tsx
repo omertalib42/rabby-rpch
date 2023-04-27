@@ -3,7 +3,6 @@ import { SessionSignal } from './SessionSignal';
 import clsx from 'clsx';
 import { useStatus } from './useStatus';
 import { useWallet, useCommonPopupView } from '@/ui/utils';
-import { WALLET_BRAND_TYPES } from '@/constant';
 import { useDisplayBrandName } from './useDisplayBrandName';
 
 interface Props {
@@ -23,8 +22,10 @@ export const SessionStatusBar: React.FC<Props> = ({
   });
   const { setVisible, setAccount } = useCommonPopupView();
   const wallet = useWallet();
-  const [realBrandName, setRealBrandName] = React.useState<string>();
-  const displayBrandName = useDisplayBrandName(realBrandName);
+  const [displayBrandName, realBrandName] = useDisplayBrandName(
+    brandName,
+    address
+  );
 
   const tipStatus = React.useMemo(() => {
     switch (status) {
@@ -60,17 +61,6 @@ export const SessionStatusBar: React.FC<Props> = ({
       setVisible('SwitchChain');
     }
   };
-
-  React.useEffect(() => {
-    if (brandName !== WALLET_BRAND_TYPES.WALLETCONNECT) {
-      setRealBrandName(brandName);
-      return;
-    }
-    wallet.getCommonWalletConnectInfo(address).then((result) => {
-      if (!result) return;
-      setRealBrandName(result.realBrandName || result.brandName);
-    });
-  }, [address, brandName]);
 
   const TipContent = () => {
     switch (tipStatus) {

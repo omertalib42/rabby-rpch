@@ -42,7 +42,7 @@ const Process = ({
   onDone(): void;
 }) => {
   const { setClassName, setTitle: setPopupViewTitle } = useCommonPopupView();
-  const displayBrandName = useDisplayBrandName(account.brandName);
+  const [displayBrandName] = useDisplayBrandName(account.brandName);
   const brandRealUrl = useWalletConnectIcon(account);
   const brandUrl = React.useMemo(() => {
     return (

@@ -24,7 +24,7 @@ export const ReconnectView: React.FC = () => {
   );
   const status = useStatus(account);
   const [bridgeURL, setBridge] = React.useState<string>(DEFAULT_BRIDGE);
-  const displayBrandName = useDisplayBrandName(
+  const [displayBrandName] = useDisplayBrandName(
     account?.realBrandName || account?.brandName
   );
 

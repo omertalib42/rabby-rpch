@@ -15,7 +15,7 @@ interface Props {
 }
 export const ConnectStatus: React.FC<Props> = ({ brandName, account }) => {
   const status = useStatus(account);
-  const displayBrandName = useDisplayBrandName(brandName);
+  const [displayBrandName] = useDisplayBrandName(brandName);
 
   const statusText = React.useMemo(() => {
     switch (status) {
