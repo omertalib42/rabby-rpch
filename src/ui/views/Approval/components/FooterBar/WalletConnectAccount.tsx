@@ -102,7 +102,7 @@ export const WalletConnectAccount: React.FC<Props> = ({ account }) => {
 
   return (
     <section>
-      <div className={clsx('space-x-6 flex items-center', 'relative')}>
+      <div className={clsx('space-x-6 flex items-start', 'relative')}>
         <div className="relative">
           <img src={addressTypeIcon} className="w-[24px] h-[24px]" />
           <SessionSignal isBadge address={address} brandName={brandName} />
@@ -114,7 +114,8 @@ export const WalletConnectAccount: React.FC<Props> = ({ account }) => {
           onClick={handleButton}
           className={clsx(
             'underline cursor-pointer',
-            'absolute right-[8px] top-[1px]'
+            'absolute right-[8px] top-[-1px]',
+            'text-13'
           )}
         >
           {tipStatus === 'ACCOUNT_ERROR' && 'How to switch'}

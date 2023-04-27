@@ -11,10 +11,20 @@ export const SwitchAddress: React.FC = () => {
   }, []);
 
   const url = React.useMemo(() => {
-    if (account?.brandName === WALLET_BRAND_TYPES.METAMASK) {
-      return '/images/wallet/switch-address-metamask.png';
+    switch (account?.brandName) {
+      case WALLET_BRAND_TYPES.METAMASK:
+        return '/images/wallet/switch-address-metamask.png';
+      case WALLET_BRAND_TYPES.TP:
+        return '/images/wallet/switch-address-tp.png';
+      case WALLET_BRAND_TYPES.COINBASE:
+        return '/images/wallet/switch-address-coinbase.png';
+      case WALLET_BRAND_TYPES.IMTOKEN:
+        return '/images/wallet/switch-address-imtoken.png';
+      case WALLET_BRAND_TYPES.TRUSTWALLET:
+        return '/images/wallet/switch-address-trustwallet.png';
+      default:
+        return '/images/wallet/switch-address-common.png';
     }
-    return '/images/wallet/switch-address-common.png';
   }, [account?.brandName]);
 
   return (
