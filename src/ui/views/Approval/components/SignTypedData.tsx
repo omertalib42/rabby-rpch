@@ -53,6 +53,7 @@ const SignTypedData = ({ params }: { params: SignTypedDataProps }) => {
     setCantProcessReason,
   ] = useState<ReactNode | null>();
   const [forceProcess, setForceProcess] = useState(true);
+  const [isWalletConnect, setIsWalletConnect] = useState(false);
 
   const { data, session, method } = params;
   let parsedMessage = '';
@@ -321,6 +322,7 @@ const SignTypedData = ({ params }: { params: SignTypedDataProps }) => {
   const init = async () => {
     const currentAccount = await wallet.getCurrentAccount();
     setIsLedger(currentAccount?.type === KEYRING_CLASS.HARDWARE.LEDGER);
+    setIsWalletConnect(currentAccount?.type === KEYRING_CLASS.WALLETCONNECT);
     setUseLedgerLive(await wallet.isUseLedgerLive());
   };
 
@@ -358,8 +360,13 @@ const SignTypedData = ({ params }: { params: SignTypedDataProps }) => {
 
   return (
     <>
-      <AccountCard />
-      <div className="approval-text">
+      {!isWalletConnect && <AccountCard />}
+      <div
+        className="approval-text"
+        style={{
+          paddingBottom: isWalletConnect ? '250px' : '0',
+        }}
+      >
         <p className="section-title">
           Sign {chain ? chain.name : ''} Typed Message
           <span
@@ -433,56 +440,60 @@ const SignTypedData = ({ params }: { params: SignTypedDataProps }) => {
         ></SecurityCheckCard>
       </div>
 
-      <footer className="approval-text__footer">
-        {isLedger && !useLedgerLive && !hasConnectedLedgerHID && (
-          <LedgerWebHIDAlert connected={hasConnectedLedgerHID} />
-        )}
-        {isWatch ? (
-          <ProcessTooltip>{cantProcessReason}</ProcessTooltip>
-        ) : (
-          <SecurityCheck
-            status={securityCheckStatus}
-            value={forceProcess}
-            onChange={handleForceProcessChange}
-          />
-        )}
-        <div className="action-buttons flex justify-between">
-          <Button
-            type="primary"
-            size="large"
-            className="w-[172px]"
-            onClick={handleCancel}
-          >
-            {t('Cancel')}
-          </Button>
-          {isWatch ? (
-            <Button
-              type="primary"
-              size="large"
-              className="w-[172px]"
-              onClick={() => handleAllow()}
-              disabled={true}
-            >
-              {t('Sign')}
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              size="large"
-              className="w-[172px]"
-              onClick={() => handleAllow(forceProcess)}
-              disabled={
-                loading ||
-                (isLedger && !useLedgerLive && !hasConnectedLedgerHID) ||
-                !forceProcess ||
-                securityCheckStatus === 'loading'
-              }
-            >
-              {submitText}
-            </Button>
+      {isWalletConnect ? (
+        <FooterBar onCancel={handleCancel} onProcess={handleAllow} />
+      ) : (
+        <footer className="approval-text__footer">
+          {isLedger && !useLedgerLive && !hasConnectedLedgerHID && (
+            <LedgerWebHIDAlert connected={hasConnectedLedgerHID} />
           )}
-        </div>
-      </footer>
+          {isWatch ? (
+            <ProcessTooltip>{cantProcessReason}</ProcessTooltip>
+          ) : (
+            <SecurityCheck
+              status={securityCheckStatus}
+              value={forceProcess}
+              onChange={handleForceProcessChange}
+            />
+          )}
+          <div className="action-buttons flex justify-between">
+            <Button
+              type="primary"
+              size="large"
+              className="w-[172px]"
+              onClick={handleCancel}
+            >
+              {t('Cancel')}
+            </Button>
+            {isWatch ? (
+              <Button
+                type="primary"
+                size="large"
+                className="w-[172px]"
+                onClick={() => handleAllow()}
+                disabled={true}
+              >
+                {t('Sign')}
+              </Button>
+            ) : (
+              <Button
+                type="primary"
+                size="large"
+                className="w-[172px]"
+                onClick={() => handleAllow(forceProcess)}
+                disabled={
+                  loading ||
+                  (isLedger && !useLedgerLive && !hasConnectedLedgerHID) ||
+                  !forceProcess ||
+                  securityCheckStatus === 'loading'
+                }
+              >
+                {submitText}
+              </Button>
+            )}
+          </div>
+        </footer>
+      )}
     </>
   );
 };
