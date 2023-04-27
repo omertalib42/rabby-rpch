@@ -4,8 +4,10 @@ import { useWallet } from '@/ui/utils';
 import { Account } from '@/background/service/preference';
 import { ActionGroup } from './ActionGroup';
 import clsx from 'clsx';
+import { Chain } from '@debank/common';
 
 interface Props {
+  chain?: Chain;
   onCancel: () => void;
   onProcess: () => void;
 }
@@ -39,7 +41,7 @@ export const FooterBar: React.FC<Props> = (props) => {
         boxShadow: '0px -8px 24px rgba(0, 0, 0, 0.1)',
       }}
     >
-      <AccountInfo account={account} />
+      <AccountInfo chain={props.chain} account={account} />
       <ActionGroup account={account} {...props} />
     </section>
   );

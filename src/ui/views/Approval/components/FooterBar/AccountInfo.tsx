@@ -6,12 +6,14 @@ import { splitNumberByStep, useWallet } from '@/ui/utils';
 import clsx from 'clsx';
 import React from 'react';
 import { WalletConnectAccount } from './WalletConnectAccount';
+import { Chain } from '@debank/common';
 
 export interface Props {
   account: Account;
+  chain?: Chain;
 }
 
-export const AccountInfo: React.FC<Props> = ({ account }) => {
+export const AccountInfo: React.FC<Props> = ({ account, chain }) => {
   const [nickname, setNickname] = React.useState<string>();
   const [balance] = useCurrentBalance(account?.address);
   const displayBalance = splitNumberByStep((balance || 0).toFixed(2));
@@ -48,7 +50,7 @@ export const AccountInfo: React.FC<Props> = ({ account }) => {
         <div title={displayBalance}>${displayBalance}</div>
       </div>
       {account?.type === KEYRING_CLASS.WALLETCONNECT && (
-        <WalletConnectAccount account={account} />
+        <WalletConnectAccount chain={chain} account={account} />
       )}
     </div>
   );

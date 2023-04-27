@@ -1725,7 +1725,11 @@ const SignTx = ({ params, origin }: SignTxProps) => {
             ></SecurityCheckCard>
 
             {isWalletConnect ? (
-              <FooterBar onCancel={handleCancel} onProcess={handleAllow} />
+              <FooterBar
+                chain={chain}
+                onCancel={handleCancel}
+                onProcess={handleAllow}
+              />
             ) : (
               <footer className="connect-footer pb-[20px]">
                 {txDetail && (

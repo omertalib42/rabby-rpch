@@ -5,15 +5,17 @@ import { useDisplayBrandName } from '@/ui/component/WalletConnect/useDisplayBran
 import { useStatus } from '@/ui/component/WalletConnect/useStatus';
 import { useWalletConnectIcon } from '@/ui/component/WalletConnect/useWalletConnectIcon';
 import { useCommonPopupView } from '@/ui/utils';
+import { Chain } from '@debank/common';
 import { Button } from 'antd';
 import clsx from 'clsx';
 import React from 'react';
 
 export interface Props {
   account: Account;
+  chain?: Chain;
 }
 
-export const WalletConnectAccount: React.FC<Props> = ({ account }) => {
+export const WalletConnectAccount: React.FC<Props> = ({ account, chain }) => {
   const { setVisible, setAccount } = useCommonPopupView();
   const { address, brandName, type } = account;
   const brandIcon = useWalletConnectIcon({
@@ -37,6 +39,9 @@ export const WalletConnectAccount: React.FC<Props> = ({ account }) => {
     brandName,
   });
   const tipStatus = React.useMemo(() => {
+    if (status === 'CHAIN_ERROR' && !chain) {
+      return 'CONNECTED';
+    }
     switch (status) {
       case 'ACCOUNT_ERROR':
         return 'ACCOUNT_ERROR';
@@ -52,7 +57,7 @@ export const WalletConnectAccount: React.FC<Props> = ({ account }) => {
       default:
         return 'CONNECTED';
     }
-  }, [status]);
+  }, [status, chain]);
   const TipContent = () => {
     switch (tipStatus) {
       case 'ACCOUNT_ERROR':
@@ -66,7 +71,7 @@ export const WalletConnectAccount: React.FC<Props> = ({ account }) => {
         return (
           <div className="text-orange">
             <div>Connected but unable to sign.</div>
-            <div>Please switch to Ethereum in mobile wallet</div>
+            <div>Please switch to {chain?.name} in mobile wallet</div>
           </div>
         );
       case 'DISCONNECTED':

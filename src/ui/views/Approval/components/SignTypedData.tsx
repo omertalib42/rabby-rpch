@@ -441,7 +441,11 @@ const SignTypedData = ({ params }: { params: SignTypedDataProps }) => {
       </div>
 
       {isWalletConnect ? (
-        <FooterBar onCancel={handleCancel} onProcess={handleAllow} />
+        <FooterBar
+          chain={chain}
+          onCancel={handleCancel}
+          onProcess={handleAllow}
+        />
       ) : (
         <footer className="approval-text__footer">
           {isLedger && !useLedgerLive && !hasConnectedLedgerHID && (
