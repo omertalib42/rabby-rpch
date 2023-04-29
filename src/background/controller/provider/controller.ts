@@ -137,7 +137,7 @@ class ProviderController extends BaseController {
     if (forceChainServerId) {
       chainServerId = forceChainServerId;
     }
-
+    console.log('method++++', method, 'params====', params)
     const currentAddress =
       preferenceService.getCurrentAccount()?.address.toLowerCase() || '0x';
     const cache = RpcCache.get(currentAddress, {

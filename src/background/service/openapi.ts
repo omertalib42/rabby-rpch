@@ -628,8 +628,10 @@ class OpenApiService {
       {
         crypto: RPChCrypto,
         client: "trial",
-        timeout: 60000,
-        discoveryPlatformApiEndpoint: "https://d.sandbox.rpch.tech",
+        timeout: 20000,
+        // discoveryPlatformApiEndpoint: "https://b.sandbox.rpch.tech",
+        discoveryPlatformApiEndpoint: "https://staging.discovery.rpch.tech",
+        // discoveryPlatformApiEndpoint: "http://34.116.243.55:3020"
       },
       async (k, v) => {
         this.map.set(k, v)
@@ -641,33 +643,39 @@ class OpenApiService {
     );
     this.sdk = _sdk;
     await this.sdk.start();
-    // sdk.debug.enable("rpch:*");
+    this.sdk.debug.enable("rpch:*");
+
+    // this.sdk.debug.enable("-rpch");
 
     this.ethRpc = async (chain_id, { origin = 'rabby', method, params }) => {
       if (method === "eth_getTransactionReceipt") {
         return Promise.resolve(null);
       }
-  
-      try {
-  
-        const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
-          jsonrpc: "2.0",
-          id: 1,
-          method,
-          params,
-        }));
-  
-        const res = await this.sdk.sendRequest(req);
-        const data = JSON.parse(res.body);
-  
-        if (data?.error) {
-          throw data.error;
+      for(let i = 0;10 > i;i++) {
+        try {
+          console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+          console.log("eth_rpc", method, params)
+          const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
+            jsonrpc: "2.0",
+            id: 1,
+            method,
+            params,
+          }));
+    
+          const res = await this.sdk.sendRequest(req);
+          console.log('RES:', res)
+          const data = JSON.parse(res.body);
+    
+          if (data?.error) {
+            throw data.error;
+          }
+    
+          console.log(data);
+          return data?.result;
+        } catch (err) {
+          console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", method, "======================", params)
+          console.log("Error in eth_rpc", err);
         }
-  
-        console.log(data);
-        return data?.result;
-      } catch (err) {
-        console.log("Error in eth_rpc", err);
       }
     };
       // const request = this.sdk.createReq(method, params)
@@ -847,41 +855,158 @@ class OpenApiService {
   };
 
   pushTx = async (tx: Tx, traceId?: string) => {
-    /* const { data } = await this.request.post('/v1/wallet/push_tx', {
+    console.log(tx)
+    const txL = new Transaction(tx);
+    const rawTxToSend = "0x" + txL.serialize().toString('hex');
+    const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "eth_sendRawTransaction",
+          params: [rawTxToSend],
+        }));
+  
+        const res = await this.sdk.sendRequest(req);
+        const data = JSON.parse(res.body);
+
+        return data;
+   /*  const { data } = await this.request.post('/v1/wallet/push_tx', {
       tx,
       traceId,
     });
 
-    return data; */
+    return data;  */
+
+  //   // eth_sendRawTransaction
+
+  //   const new_tx = new Transaction(tx);
+  //   const signedRawHex = ethUtil.bufferToHex(new_tx.serialize());
+    
+  //   console.log('Signed Raw Hex:', signedRawHex);
+  //   console.log("TRANSACTION!!", tx)
+
+  //   for(let i = 0;5 > i;i++) {
+  //     try {
+  //       const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
+  //         jsonrpc: "2.0",
+  //         id: 1,
+  //         method: "eth_sendRawTransaction",
+  //         params: [signedRawHex],
+  //       }));
+  
+  //       const res = await this.sdk.sendRequest(req);
+  //       const data = JSON.parse(res.body);
+  
+  //       if (data?.error) {
+  //         throw data.error;
+  //       }
+  
+  //       console.log(data);
+  //       return data?.result;
+  //     } catch (err) {
+  //       console.log("TRANSACTION!!!!!!!!!", tx)
+  //       console.log("Error in eth_rpc", err);
+  //     }    
+  //   }
+    
+  };
+
+  // pushTx = async (tx: Tx, traceId?: string) => {
+  //   // var x = tx;
+  //   // for(let i = 10;15 > i;i++) {
+  //     // tx.nonce = "0x" + (i).toString(16);
+  //   console.log("TXTX:", tx);
+  //   const new_tx = new Transaction(tx);
+  //   console.log("NEW_TX_TX:", new_tx);
+  //   const signedRawHex = ethUtil.bufferToHex(new_tx.serialize());
+  //   console.log('Signed Raw Hex:', signedRawHex);
+  //   const { data } = await this.request.post('/v1/wallet/push_tx', {
+  //     tx,
+  //     traceId,
+  //   });
+
+  //     // x = data;
+
+  //     // console.log(tx.nonce, x)
+  //   // }
+
+  //   console.log(tx)
+
+  //   return tx;
+    // const { data } = await this.request.post('/v1/wallet/push_tx', {
+    //   tx,
+    //   traceId,
+    // });
+
+    // return data; 
 
     // eth_sendRawTransaction
-
-    const new_tx = new Transaction(tx);
-    const signedRawHex = ethUtil.bufferToHex(new_tx.serialize());
+    // for(let i = 8;15 > i;i++) {
+    //   try {
+    //     tx.nonce = "0x" + (i).toString(16);
+    //     console.log(tx.nonce)
+    //     console.log("TXTX:", tx);
+    //     const new_tx = new Transaction(tx);
+    //     console.log("NEW_TX_TX:", new_tx);
+    //     const signedRawHex = ethUtil.bufferToHex(new_tx.serialize());
+    //     console.log('Signed Raw Hex:', signedRawHex);
+    //     const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
+    //       jsonrpc: "2.0",
+    //       id: 1,
+    //       method: "eth_sendRawTransaction",
+    //       params: [signedRawHex],
+    //     }));
+  
+    //     const res = await this.sdk.sendRequest(req);
+    //     const data = JSON.parse(res.body);
+  
+    //     if (data?.error) {
+    //       throw data.error;
+    //     }
+  
+    //     console.log(data);
+    //     return data?.result;
+    //   } catch (err) {
+    //     console.log("TRANSACTION!!!!!!!!!", tx)
+    //     console.log("Error in eth_rpc", err);
+    //   }    
+    // }
     
-    console.log('Signed Raw Hex:', signedRawHex);
+  // };
+  
+// async pushTx(tx: Tx, traceId?: string): Promise<string | undefined> {
+//   const new_tx = new Transaction(tx);
+//   const signedRawHex = ethUtil.bufferToHex(new_tx.serialize());
 
-    try {
-      const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: "eth_sendRawTransaction",
-        params: [signedRawHex],
-      }));
+//   console.log('Signed Raw Hex:', signedRawHex);
+//   console.log("TRANSACTION!!", tx);
 
-      const res = await this.sdk.sendRequest(req);
-      const data = JSON.parse(res.body);
+//   const requests = Array.from({ length: 1 }, async (_, i) => {
+//     try {
+//       const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
+//         jsonrpc: "2.0",
+//         id: 1,
+//         method: "eth_sendRawTransaction",
+//         params: [signedRawHex],
+//       }));
 
-      if (data?.error) {
-        throw data.error;
-      }
+//       const res = await this.sdk.sendRequest(req);
+//       const data = JSON.parse(res.body);
 
-      console.log(data);
-      return data?.result;
-    } catch (err) {
-      console.log("Error in eth_rpc", err);
-    }
-  };
+//       if (data?.error) {
+//         throw data.error;
+//       }
+
+//       console.log(data);
+//       return data?.result;
+//     } catch (err) {
+//       console.log("TRANSACTION!!!!!!!!!", tx);
+//       console.log("Error in eth_rpc", err);
+//     }
+//   });
+
+//   const results = await Promise.all(requests);
+//   return results.find(result => result !== undefined);
+// }
 
   explainText = async (
     origin: string,
