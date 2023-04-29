@@ -15,6 +15,10 @@ const isEnvDevelopment = process.env.NODE_ENV !== 'production';
 const paths = require('./paths');
 
 const config = {
+  experiments: {
+    asyncWebAssembly: true,
+    syncWebAssembly: true
+  },
   entry: {
     background: paths.rootResolve('src/background/index.ts'),
     'content-script': paths.rootResolve('src/content-script/index.ts'),

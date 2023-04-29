@@ -46,6 +46,8 @@
     "@rabby-wallet/widgets": "^1.0.9",
     "@rematch/core": "^2.2.0",
     "@rematch/select": "^3.1.2",
+    "@rpch/crypto": "^0.3.4",
+    "@rpch/sdk": "^0.2.1",
     "@sentry/browser": "^6.7.2",
     "@sentry/react": "^6.7.2",
     "@sentry/tracing": "^6.7.2",

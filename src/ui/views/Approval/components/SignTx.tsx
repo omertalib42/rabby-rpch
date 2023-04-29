@@ -295,13 +295,14 @@ const getRecommendNonce = async ({
   if (!chain) {
     throw new Error('chain not found');
   }
-  const onChainNonce = await wallet.requestETHRpc(
+  /* const onChainNonce = await wallet.requestETHRpc(
     {
       method: 'eth_getTransactionCount',
       params: [tx.from, 'latest'],
     },
     chain.serverId
-  );
+  ); */
+  const onChainNonce = 0;
   const localNonce = (await wallet.getNonceByChain(tx.from, chainId)) || 0;
   return `0x${BigNumber.max(onChainNonce, localNonce).toString(16)}`;
 };

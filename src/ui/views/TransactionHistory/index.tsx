@@ -235,7 +235,7 @@ const TransactionItem = ({
   const originTx = minBy(item.txs, (tx) => tx.createdAt)!;
   const completedTx = item.txs.find((tx) => tx.isCompleted);
   const isCompleted = !item.isPending || item.isSubmitFailed;
-  const intervalDelay = item.isPending ? 1000 : null;
+  const intervalDelay = item.isPending ? 30000 : null;
   const isCanceled =
     !item.isPending &&
     item.txs.length > 1 &&

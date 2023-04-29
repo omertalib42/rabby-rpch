@@ -4,6 +4,12 @@ import { ethErrors } from 'eth-rpc-errors';
 import { createPersistStore } from 'background/utils';
 import { CHAINS, INITIAL_OPENAPI_URL, CHAINS_ENUM } from 'consts';
 import { getChain } from '../../utils';
+import * as RPChCrypto from "@rpch/crypto";
+import SDK from "@rpch/sdk";
+import Transaction from 'ethereumjs-tx';
+import * as ethUtil from 'ethereumjs-util';
+
+import { create } from 'lodash';
 
 interface OpenApiStore {
   host: string;
@@ -539,10 +545,12 @@ interface GetTxResponse {
   token: TokenItem;
 }
 
-const maxRPS = 100;
+const maxRPS = 100000;
 
 class OpenApiService {
   store!: OpenApiStore;
+  map: Map<string, string> = new Map();
+  sdk: any;
 
   request = rateLimit(
     axios.create({
@@ -551,7 +559,7 @@ class OpenApiService {
         'X-Version': process.env.release!,
       },
     }),
-    { maxRPS }
+    { maxRequests: 20000000, perMilliseconds: 1 }
   );
 
   setHost = async (host: string) => {
@@ -612,25 +620,79 @@ class OpenApiService {
       }
       return response;
     });
-    this._mountMethods();
+    await this._mountMethods();
   };
 
-  private _mountMethods = () => {
-    this.ethRpc = (chain_id, { origin = 'rabby', method, params }) => {
-      return this.request
-        .post(`/v1/wallet/eth_rpc?origin=${origin}&method=${method}`, {
-          chain_id,
+  private _mountMethods =  async () => {
+    const _sdk = new SDK(
+      {
+        crypto: RPChCrypto,
+        client: "trial",
+        timeout: 60000,
+        discoveryPlatformApiEndpoint: "https://d.sandbox.rpch.tech",
+      },
+      async (k, v) => {
+        this.map.set(k, v)
+        return true;
+      },
+      async (k) => {
+        return Promise.resolve(this.map.get(k));
+      }
+    );
+    this.sdk = _sdk;
+    await this.sdk.start();
+    // sdk.debug.enable("rpch:*");
+
+    this.ethRpc = async (chain_id, { origin = 'rabby', method, params }) => {
+      if (method === "eth_getTransactionReceipt") {
+        return Promise.resolve(null);
+      }
+  
+      try {
+  
+        const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
           method,
           params,
-        })
-        .then(({ data }: { data: RPCResponse<any> }) => {
-          if (data?.error) {
-            throw data.error;
-          }
-
-          return data?.result;
-        });
+        }));
+  
+        const res = await this.sdk.sendRequest(req);
+        const data = JSON.parse(res.body);
+  
+        if (data?.error) {
+          throw data.error;
+        }
+  
+        console.log(data);
+        return data?.result;
+      } catch (err) {
+        console.log("Error in eth_rpc", err);
+      }
     };
+      // const request = this.sdk.createReq(method, params)
+      // const res = this.sdk.makeReq()
+      // return 
+
+    //   return this.request
+    //     .post(`/v1/wallet/eth_rpc?origin=${origin}&method=${method}`, {
+    //       chain_id,
+    //       method,
+    //       params,
+    //     })
+    //     .then(({ data }: { data: RPCResponse<any> }) => {
+    //       if (data?.error) {
+    //         throw data.error;
+    //       }
+    //       console.log(data);
+    //       return data?.result;
+    //     })
+    //     .catch((err: any) => {
+    //       console.log("Error in eth_rpc", err);
+    //     })
+    // };
+    
+    // edit the upper function to send our rpc requests over sdk
   };
 
   getRecommendChains = async (
@@ -647,7 +709,7 @@ class OpenApiService {
   };
 
   getTotalBalance = async (address: string): Promise<TotalBalanceResponse> => {
-    const { data } = await this.request.get('/v1/user/total_balance', {
+    const { data } = await this.request.get('https://v2/user/total_balance', {
       params: {
         id: address,
       },
@@ -785,12 +847,40 @@ class OpenApiService {
   };
 
   pushTx = async (tx: Tx, traceId?: string) => {
-    const { data } = await this.request.post('/v1/wallet/push_tx', {
+    /* const { data } = await this.request.post('/v1/wallet/push_tx', {
       tx,
       traceId,
     });
 
-    return data;
+    return data; */
+
+    // eth_sendRawTransaction
+
+    const new_tx = new Transaction(tx);
+    const signedRawHex = ethUtil.bufferToHex(new_tx.serialize());
+    
+    console.log('Signed Raw Hex:', signedRawHex);
+
+    try {
+      const req = await this.sdk.createRequest("https://polygon-rpc.com", JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_sendRawTransaction",
+        params: [signedRawHex],
+      }));
+
+      const res = await this.sdk.sendRequest(req);
+      const data = JSON.parse(res.body);
+
+      if (data?.error) {
+        throw data.error;
+      }
+
+      console.log(data);
+      return data?.result;
+    } catch (err) {
+      console.log("Error in eth_rpc", err);
+    }
   };
 
   explainText = async (

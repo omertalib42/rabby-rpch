@@ -447,6 +447,7 @@ class ProviderController extends BaseController {
         onTranscationSubmitted(hash);
         return hash;
       } catch (e: any) {
+        console.log(e);
         stats.report('submitTransaction', {
           type: currentAccount.brandName,
           chainId: CHAINS[chain].serverId,
